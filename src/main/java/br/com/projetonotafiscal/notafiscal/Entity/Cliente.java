@@ -1,7 +1,6 @@
 package br.com.projetonotafiscal.notafiscal.Entity;
 
-import br.com.projetonotafiscal.notafiscal.DTO.DadosAtualizaCliente;
-import br.com.projetonotafiscal.notafiscal.DTO.DadosCadastroCliente;
+import br.com.projetonotafiscal.notafiscal.DTO.ClienteDTO;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -13,66 +12,47 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long codigo_cliente;
+    private String codigo;
     private String nome;
+
 
     public Cliente() {}
 
-    public Cliente(DadosCadastroCliente dto) {
+
+    public Cliente(ClienteDTO dto) {
+        this.id = dto.getId();
+        this.codigo = dto.getCodigo();
         this.nome = dto.getNome();
     }
 
-    public Cliente(String nome, Long codigoCliente) {
-    }
 
     public Long getId() {
         return id;
-    }
-
-    public Long getCodigoCliente() {
-        return codigo_cliente;
-    }
-
-    public String getNome() {
-        return nome;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public void setCodigoCliente(Long codigoCliente) {
-        this.codigo_cliente = codigoCliente;
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public String getNome() {
+        return nome;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
     }
 
-    @Override
-    public String toString() {
-        return "Cliente{" +
-                "nome='" + nome + '\'' +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Cliente cliente = (Cliente) o;
-        return Objects.equals(id, cliente.id) && Objects.equals(codigo_cliente, cliente.codigo_cliente) && Objects.equals(nome, cliente.nome);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, codigo_cliente, nome);
-    }
-
-    public void atualizar(DadosAtualizaCliente dto) {
+    public void atualizar(ClienteDTO dto) {
         if (dto.getNome() != null) {
             this.nome = dto.getNome();
         }
     }
-
 }

@@ -1,8 +1,7 @@
 package br.com.projetonotafiscal.notafiscal.Controller;
 
-import br.com.projetonotafiscal.notafiscal.DTO.DadosAtualizaCliente;
-import br.com.projetonotafiscal.notafiscal.DTO.DadosCadastroCliente;
-import br.com.projetonotafiscal.notafiscal.DTO.DadosListagemCliente;
+import br.com.projetonotafiscal.notafiscal.DTO.ClienteDTO;
+import br.com.projetonotafiscal.notafiscal.Entity.Cliente;
 import br.com.projetonotafiscal.notafiscal.Service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,23 +21,23 @@ public class ClienteController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity salvar(@RequestBody DadosCadastroCliente dados) {
-        DadosListagemCliente dto = service.salvar(dados);
+    public ResponseEntity salvar(@RequestBody ClienteDTO dados) {
+        Cliente dto = service.salvar(dados);
 
         return ResponseEntity.ok(dto);
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity atualizar(@RequestBody DadosAtualizaCliente dados) {
-        DadosListagemCliente dto = service.atualizar(dados);
+    public ResponseEntity atualizar(@RequestBody ClienteDTO dados) {
+        service.atualizar(dados);
 
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok("Atualizado com Sucesso!");
     }
 
 
     @GetMapping
-    public ResponseEntity<Page<DadosListagemCliente>> buscarTodos(@PageableDefault(size = 10, sort = {"nome"})Pageable paginacao) {
+    public ResponseEntity<Page<ClienteDTO>> buscarTodos(@PageableDefault(size = 10, sort = {"nome"})Pageable paginacao) {
         Page dto = service.listarTodos(paginacao);
 
         return ResponseEntity.ok(dto);
@@ -47,7 +46,7 @@ public class ClienteController {
 
     @GetMapping("/{id}")
     public ResponseEntity detalha(@PathVariable Long id) {
-        DadosListagemCliente dto = service.detalhar(id);
+        Cliente dto = service.detalhar(id);
 
         return ResponseEntity.ok(dto);
     }

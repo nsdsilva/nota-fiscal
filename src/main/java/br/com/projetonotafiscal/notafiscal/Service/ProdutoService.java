@@ -1,7 +1,6 @@
 package br.com.projetonotafiscal.notafiscal.Service;
 
 import br.com.projetonotafiscal.notafiscal.DTO.*;
-import br.com.projetonotafiscal.notafiscal.Entity.Cliente;
 import br.com.projetonotafiscal.notafiscal.Entity.Produto;
 import br.com.projetonotafiscal.notafiscal.Infra.ValidacaoException;
 import br.com.projetonotafiscal.notafiscal.Repository.ProdutoRepository;
@@ -18,52 +17,50 @@ public class ProdutoService {
 
 
     //método para salvar produto
-    public DadosListagemProduto salvar(DadosCadastroProduto dto) {
+    public Produto salvar(ProdutoDTO dto) {
         Produto produto = new Produto(dto);
 
         if (dto.getDescricao() == null) {
             throw new ValidacaoException("É necessário informar uma descrição para o produto.");
         }
 
-        if (dto.getValor_unitario() == 0) {
+        if (dto.getValor_unitario() == null) {
             throw new ValidacaoException("É necessário informar um valor para o produto.");
         }
 
-        Long ultimoProduto = repository.findTopByOrderByIdDesc();
-        if (ultimoProduto != null) {
-            produto.setCodigo(ultimoProduto + 1);
-        } else {
-            produto.setCodigo(1L);
-        }
+//        Long ultimoProduto = repository.findTopByOrderByIdDesc();
+//        if (ultimoProduto != null) {
+//            produto.setCodigo(ultimoProduto + 1);
+//        } else {
+//            produto.setCodigo(1L);
+//        }
 
-        repository.save(produto);
+        produto = repository.save(produto);
 
-        return new DadosListagemProduto(produto);
+        return produto;
     }
 
 
     //método para atualizar produto
-    public DadosListagemProduto atualizar(DadosAtualizaProduto dto) {
+    public void atualizar(ProdutoDTO dto) {
         Produto produto = repository.getReferenceById(dto.getId());
         produto.atualizar(dto);
-
-        return new DadosListagemProduto(produto);
     }
 
 
     //método para listar todos os produtos
-    public Page<DadosListagemProduto> listarTodos(Pageable paginacao) {
-        Page page = repository.findAll(paginacao).map(DadosListagemProduto :: new);
+    public Page<ProdutoDTO> listarTodos(Pageable paginacao) {
+        Page page = repository.findAll(paginacao).map(ProdutoDTO :: new);
 
         return page;
     }
 
 
     //método para listar o produto de acordo com o seu ID
-    public DadosListagemProduto detalhar(Long id) {
+    public Produto detalhar(Long id) {
         Produto produto = repository.getReferenceById(id);
 
-        return new DadosListagemProduto(produto);
+        return produto;
     }
 
 

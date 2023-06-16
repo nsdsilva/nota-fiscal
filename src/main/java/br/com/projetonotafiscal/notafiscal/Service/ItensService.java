@@ -37,15 +37,16 @@ public class ItensService {
         double soma = 0;
         double valorTotal = 0;
         int quantidade = dto.getQuantidade();
-        double valorProduto = produtoRepository.getByValorUnitarioProduto(dto.getProduto());
+        //double valorProduto = produtoRepository.getByValorUnitarioProduto(dto.getProduto());
 
-        valorTotal = quantidade * valorProduto;
-
+        //valorTotal = quantidade * valorProduto;
         valor.add(valorTotal);
 
         for (int i = 0; i < valor.size(); i++) {
             soma += valor.get(i);
         }
+
+
 
         Produto produto = produtoRepository.getReferenceById(dto.getProduto());
     }

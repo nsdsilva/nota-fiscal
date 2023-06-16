@@ -1,8 +1,6 @@
 package br.com.projetonotafiscal.notafiscal.Service;
 
-import br.com.projetonotafiscal.notafiscal.DTO.DadosAtualizaCliente;
-import br.com.projetonotafiscal.notafiscal.DTO.DadosCadastroCliente;
-import br.com.projetonotafiscal.notafiscal.DTO.DadosListagemCliente;
+import br.com.projetonotafiscal.notafiscal.DTO.ClienteDTO;
 import br.com.projetonotafiscal.notafiscal.Entity.Cliente;
 import br.com.projetonotafiscal.notafiscal.Infra.ValidacaoException;
 import br.com.projetonotafiscal.notafiscal.Repository.ClienteRepository;
@@ -20,49 +18,45 @@ public class ClienteService {
 
 
     //método para salvar o cliente no banco de dados
-    public DadosListagemCliente salvar(DadosCadastroCliente dto) {
+    public Cliente salvar(ClienteDTO dto) {
       Cliente cliente = new Cliente(dto);
 
       if (dto.getNome() != null) {
           throw new ValidacaoException("É necessário informar o nome do cliente.");
       }
+//      Long ultimoCliente = repository.findTopByOrderByIdDesc();
+//      if (ultimoCliente != null) {
+//          cliente.setCodigoCliente(ultimoCliente + 1);
+//      } else {
+//          cliente.setCodigoCliente(1L);
+//      }
 
-      Long ultimoCliente = repository.findTopByOrderByIdDesc();
+      cliente = repository.save(cliente);
 
-      if (ultimoCliente != null) {
-          cliente.setCodigoCliente(ultimoCliente + 1);
-      } else {
-          cliente.setCodigoCliente(1L);
-      }
-
-      repository.save(cliente);
-
-      return new DadosListagemCliente(cliente);
+      return cliente;
     }
 
 
     //método para atualizar informações do cliente
-    public DadosListagemCliente atualizar(DadosAtualizaCliente dto) {
+    public void atualizar(ClienteDTO dto) {
         Cliente cliente = repository.getReferenceById(dto.getId());
         cliente.atualizar(dto);
-
-        return new DadosListagemCliente(cliente);
     }
 
 
     //método para listar todos os clientes
-    public Page<DadosListagemCliente> listarTodos(Pageable paginacao) {
-        Page page = repository.findAll(paginacao).map(DadosListagemCliente :: new);
+    public Page<ClienteDTO> listarTodos(Pageable paginacao) {
+        Page page = repository.findAll(paginacao).map(ClienteDTO :: new);
 
         return page;
     }
 
 
     //método para listar o cliente de acordo com o seu ID
-    public DadosListagemCliente detalhar(Long id) {
+    public Cliente detalhar(Long id) {
         Cliente cliente = repository.getReferenceById(id);
 
-        return new DadosListagemCliente(cliente);
+        return cliente;
     }
 
 
