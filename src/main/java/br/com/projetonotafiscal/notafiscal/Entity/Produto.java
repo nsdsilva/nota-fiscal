@@ -2,6 +2,7 @@ package br.com.projetonotafiscal.notafiscal.Entity;
 
 import br.com.projetonotafiscal.notafiscal.DTO.ClienteDTO;
 import br.com.projetonotafiscal.notafiscal.DTO.ProdutoDTO;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 @Entity(name = "Produto")
 @Table(name = "produto")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Produto {
 
     @Id

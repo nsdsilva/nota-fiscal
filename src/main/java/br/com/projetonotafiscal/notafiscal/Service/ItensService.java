@@ -9,6 +9,7 @@ import br.com.projetonotafiscal.notafiscal.Repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,34 +23,37 @@ public class ItensService {
     private ProdutoRepository produtoRepository;
 
 
-    public void salvar(ItensDTO dto) {
+    public Itens salvar(ItensDTO dto) {
         Itens itens = new Itens(dto);
 
+        if(dto.getProduto() == null) {
+            throw new ValidacaoException("É necessário adicionar pelo menos um produto.");
+        }
+
         if (!produtoRepository.existsById(dto.getProduto())) {
-            throw new ValidacaoException("Produto escolhido não existe.");
+            throw new ValidacaoException("O produto não existe.");
         }
+
         if (dto.getQuantidade() == 0) {
-            throw new ValidacaoException("É necessário informar a quantidade.");
+            throw new ValidacaoException("É necessário adicionar a quantidade ao produto.");
         }
 
-        //Criando lista para pegar o valor do produto adicionado e somar o valor unitário;
-        List<Double> valor = new ArrayList<>();
-        double soma = 0;
-        double valorTotal = 0;
+        Produto produto = new Produto();
+        produto = produtoRepository.getReferenceById(dto.getProduto());
+
+        List<Itens> itensList = new ArrayList<>();
         int quantidade = dto.getQuantidade();
-        //double valorProduto = produtoRepository.getByValorUnitarioProduto(dto.getProduto());
+        BigDecimal valorUnitario = produtoRepository.getByValorUnitarioProduto(dto.getProduto());
+       // BigDecimal valorTotal = valorUnitario * quantidade;
+        int ordenacao = 0;
 
-        //valorTotal = quantidade * valorProduto;
-        valor.add(valorTotal);
+        for (int i =0; i < itensList.size(); i++) {
+            if (itensList.isEmpty()) {
+                ordenacao = 1;
 
-        for (int i = 0; i < valor.size(); i++) {
-            soma += valor.get(i);
+            }
         }
-
-
-
-        Produto produto = produtoRepository.getReferenceById(dto.getProduto());
+        return itens;
     }
-
 
 }

@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 public class ProdutoService {
 
@@ -28,13 +30,12 @@ public class ProdutoService {
             throw new ValidacaoException("É necessário informar um valor para o produto.");
         }
 
-//        Long ultimoProduto = repository.findTopByOrderByIdDesc();
-//        if (ultimoProduto != null) {
-//            produto.setCodigo(ultimoProduto + 1);
-//        } else {
-//            produto.setCodigo(1L);
-//        }
+        //String codigoAleatorio = UUID.randomUUID().toString();
+        Random random = new Random();
+        int numeroAleatorio = random.nextInt();
+        String codigoAleatorio = String.valueOf(numeroAleatorio);
 
+        produto.setCodigo(codigoAleatorio);
         produto = repository.save(produto);
 
         return produto;

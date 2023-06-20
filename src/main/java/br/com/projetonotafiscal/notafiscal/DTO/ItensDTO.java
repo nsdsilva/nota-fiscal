@@ -4,6 +4,7 @@ import br.com.projetonotafiscal.notafiscal.Entity.Itens;
 import br.com.projetonotafiscal.notafiscal.Entity.Produto;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 public class ItensDTO {
 
@@ -11,14 +12,14 @@ public class ItensDTO {
     private int ordenacao;
     private Long produto;
     private int quantidade;
-    private double valor_total;
+    private BigDecimal valor_total;
 
     public ItensDTO() {}
 
     public ItensDTO(Itens itens) {
         this.id = itens.getId();
         this.ordenacao = itens.getOrdenacao();
-        //this.produto = new Itens(itens.getProduto());
+        this.produto = new Produto(itens.getProduto());
         this.quantidade = itens.getQuantidade();
         this.valor_total = itens.getValor_total();
     }
@@ -27,19 +28,39 @@ public class ItensDTO {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public int getOrdenacao() {
         return ordenacao;
+    }
+
+    public void setOrdenacao(int ordenacao) {
+        this.ordenacao = ordenacao;
     }
 
     public Long getProduto() {
         return produto;
     }
 
+    public void setProduto(Long produto) {
+        this.produto = produto;
+    }
+
     public int getQuantidade() {
         return quantidade;
     }
 
-    public double getValor_total() {
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public BigDecimal getValor_total() {
         return valor_total;
+    }
+
+    public void setValor_total(BigDecimal valor_total) {
+        this.valor_total = valor_total;
     }
 }
