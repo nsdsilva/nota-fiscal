@@ -9,6 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+import java.util.UUID;
+
 
 @Service
 public class ClienteService {
@@ -17,24 +20,27 @@ public class ClienteService {
     private ClienteRepository repository;
 
 
+
     //método para salvar o cliente no banco de dados
     public Cliente salvar(ClienteDTO dto) {
       Cliente cliente = new Cliente(dto);
 
-      if (dto.getNome() != null) {
+      if (dto.getNome() == null) {
           throw new ValidacaoException("É necessário informar o nome do cliente.");
       }
-//      Long ultimoCliente = repository.findTopByOrderByIdDesc();
-//      if (ultimoCliente != null) {
-//          cliente.setCodigoCliente(ultimoCliente + 1);
-//      } else {
-//          cliente.setCodigoCliente(1L);
-//      }
+
+      //String codigoAleatorio = UUID.randomUUID().toString();
+      Random random = new Random();
+      int numeroAleatorio = random.nextInt();
+      String codigoAleatorio = String.valueOf(numeroAleatorio);
+
+      cliente.setCodigo(codigoAleatorio);
 
       cliente = repository.save(cliente);
 
       return cliente;
     }
+
 
 
     //método para atualizar informações do cliente

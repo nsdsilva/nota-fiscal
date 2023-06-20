@@ -1,12 +1,14 @@
 package br.com.projetonotafiscal.notafiscal.Entity;
 
 import br.com.projetonotafiscal.notafiscal.DTO.ClienteDTO;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "Cliente")
 @Table(name = "cliente")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Cliente {
 
     @Id

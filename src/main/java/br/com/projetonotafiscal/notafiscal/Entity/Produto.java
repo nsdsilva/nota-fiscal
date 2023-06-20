@@ -14,7 +14,7 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long codigo;
+    private String codigo;
     private String descricao;
     private BigDecimal valor_unitario;
 
@@ -35,11 +35,11 @@ public class Produto {
         this.id = id;
     }
 
-    public Long getCodigo() {
+    public String getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(Long codigo) {
+    public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 

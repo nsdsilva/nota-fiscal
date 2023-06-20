@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public class ProdutoDTO {
 
     private Long id;
-    private Long codigo;
+    private String codigo;
     private String descricao;
     private BigDecimal valor_unitario;
 
@@ -29,11 +29,11 @@ public class ProdutoDTO {
         this.id = id;
     }
 
-    public Long getCodigo() {
+    public String getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(Long codigo) {
+    public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
