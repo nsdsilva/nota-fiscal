@@ -13,7 +13,7 @@ public class NotaDTO {
 
 
     private Long id;
-    private Cliente cliente;
+    private Long cliente;
     private List<Itens> itens;
     private LocalDate data;
     private BigDecimal valor_total;
@@ -23,7 +23,7 @@ public class NotaDTO {
 
     public NotaDTO(Nota nota) {
         this.id = nota.getId();
-        this.cliente = nota.getCliente();
+        this.cliente = nota.getCliente().getId();
         this.itens = nota.getItens();
         this.data = nota.getData();
         this.valor_total = nota.getValor_total();
@@ -38,11 +38,11 @@ public class NotaDTO {
         this.id = id;
     }
 
-    public Cliente getCliente() {
+    public Long getCliente() {
         return cliente;
     }
 
-    public void setCliente(Cliente cliente) {
+    public void setCliente(Long cliente) {
         this.cliente = cliente;
     }
 

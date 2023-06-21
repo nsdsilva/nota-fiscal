@@ -35,7 +35,7 @@ public class Nota {
 
     public Nota(NotaDTO dto) {
         this.id = dto.getId();
-        this.cliente = dto.getCliente();
+        //this.cliente = dto.getCliente();
         this.itens = dto.getItens();
         this.data = dto.getData();
         this.valor_total = dto.getValor_total();

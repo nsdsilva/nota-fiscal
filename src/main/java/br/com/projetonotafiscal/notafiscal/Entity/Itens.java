@@ -22,13 +22,15 @@ public class Itens {
     @ManyToMany(mappedBy = "itens")
     private List<Nota> notas;
     private int ordenacao;
-    private int quantidade;
+    private BigDecimal quantidade;
     private BigDecimal valor_total;
 
 
+    public Itens() {}
+
     public Itens(ItensDTO dto) {
         this.ordenacao = dto.getOrdenacao();
-        this.produto = dto.getProduto();
+        //this.produto = dto.getProduto();
         this.quantidade = dto.getQuantidade();
         this.valor_total = dto.getValor_total();
     }
@@ -57,11 +59,11 @@ public class Itens {
         this.produto = produto;
     }
 
-    public int getQuantidade() {
+    public BigDecimal getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(int quantidade) {
+    public void setQuantidade(BigDecimal quantidade) {
         this.quantidade = quantidade;
     }
 

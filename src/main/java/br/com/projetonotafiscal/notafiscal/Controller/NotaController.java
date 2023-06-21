@@ -1,10 +1,8 @@
 package br.com.projetonotafiscal.notafiscal.Controller;
 
-import br.com.projetonotafiscal.notafiscal.DTO.ClienteDTO;
-import br.com.projetonotafiscal.notafiscal.DTO.ItensDTO;
-import br.com.projetonotafiscal.notafiscal.Entity.Cliente;
-import br.com.projetonotafiscal.notafiscal.Entity.Itens;
-import br.com.projetonotafiscal.notafiscal.Service.ItensService;
+import br.com.projetonotafiscal.notafiscal.DTO.NotaDTO;
+import br.com.projetonotafiscal.notafiscal.Entity.Nota;
+import br.com.projetonotafiscal.notafiscal.Service.NotaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,18 +12,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/itens")
-public class ItensController {
+@RequestMapping("/nota")
+public class NotaController {
 
     @Autowired
-    private ItensService service;
+    private NotaService service;
 
 
     @PostMapping
     @Transactional
-    public ResponseEntity salvar(@RequestBody ItensDTO dados) {
-        Itens dto = service.salvar(dados);
+    public ResponseEntity salvar(@RequestBody NotaDTO dto) {
+        Nota nota = service.salvar(dto);
 
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok("Salvo com sucesso.");
     }
 }

@@ -1,9 +1,7 @@
 package br.com.projetonotafiscal.notafiscal.DTO;
 
 import br.com.projetonotafiscal.notafiscal.Entity.Itens;
-import br.com.projetonotafiscal.notafiscal.Entity.Produto;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 
 public class ItensDTO {
@@ -11,7 +9,7 @@ public class ItensDTO {
     private Long id;
     private int ordenacao;
     private Long produto;
-    private int quantidade;
+    private BigDecimal quantidade;
     private BigDecimal valor_total;
 
     public ItensDTO() {}
@@ -19,7 +17,7 @@ public class ItensDTO {
     public ItensDTO(Itens itens) {
         this.id = itens.getId();
         this.ordenacao = itens.getOrdenacao();
-        this.produto = new Produto(itens.getProduto());
+        this.produto = itens.getProduto().getId();
         this.quantidade = itens.getQuantidade();
         this.valor_total = itens.getValor_total();
     }
@@ -48,11 +46,11 @@ public class ItensDTO {
         this.produto = produto;
     }
 
-    public int getQuantidade() {
+    public BigDecimal getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(int quantidade) {
+    public void setQuantidade(BigDecimal quantidade) {
         this.quantidade = quantidade;
     }
 
