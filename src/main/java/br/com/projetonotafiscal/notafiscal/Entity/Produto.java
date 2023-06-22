@@ -22,6 +22,10 @@ public class Produto {
 
     public Produto() {}
 
+    public Produto(int id) {
+        this.id = Long.valueOf(id);
+    }
+
     public Produto(ProdutoDTO dto) {
         this.id = dto.getId();
         this.codigo = dto.getCodigo();

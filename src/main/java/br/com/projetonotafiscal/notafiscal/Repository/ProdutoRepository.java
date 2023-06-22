@@ -10,7 +10,4 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
     @Query("SELECT MAX(id) FROM Produto")
     Long findTopByOrderByIdDesc();
-
-    @Query("SELECT p.valor_unitario FROM Produto p WHERE p.id = :id")
-    BigDecimal getByValorUnitarioProduto(Long id);
 }

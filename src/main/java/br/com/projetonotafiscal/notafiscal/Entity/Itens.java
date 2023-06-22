@@ -1,11 +1,8 @@
 package br.com.projetonotafiscal.notafiscal.Entity;
 
-import br.com.projetonotafiscal.notafiscal.DTO.ItensDTO;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Entity(name = "Itens")
 @Table(name = "itens")
@@ -28,12 +25,6 @@ public class Itens {
 
     public Itens() {}
 
-    public Itens(ItensDTO dto) {
-        this.ordenacao = dto.getOrdenacao();
-        //this.produto = dto.getProduto();
-        this.quantidade = dto.getQuantidade();
-        this.valor_total = dto.getValor_total();
-    }
 
     public Long getId() {
         return id;
