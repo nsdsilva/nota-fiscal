@@ -1,12 +1,11 @@
 package br.com.projetonotafiscal.notafiscal.DTO;
 
-import br.com.projetonotafiscal.notafiscal.Entity.Cliente;
 import br.com.projetonotafiscal.notafiscal.Entity.Itens;
 import br.com.projetonotafiscal.notafiscal.Entity.Nota;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public class NotaDTO {
@@ -15,9 +14,9 @@ public class NotaDTO {
     private Long id;
     private Long cliente;
     private List<Itens> itens;
-    private LocalDate data;
+    private Date data;
     private BigDecimal valor_total;
-    private String numero;
+    private Integer numero;
 
     public NotaDTO() {}
 
@@ -54,12 +53,20 @@ public class NotaDTO {
         this.itens = itens;
     }
 
-    public LocalDate getData() {
+    public Date getData() {
         return data;
     }
 
-    public void setData(LocalDate data) {
+    public void setData(Date data) {
         this.data = data;
+    }
+
+    public void setNumero(Integer numero) {
+        this.numero = numero;
+    }
+
+    public Integer getNumero() {
+        return numero;
     }
 
     public BigDecimal getValor_total() {
@@ -70,11 +77,4 @@ public class NotaDTO {
         this.valor_total = valor_total;
     }
 
-    public String getNumero() {
-        return numero;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
 }

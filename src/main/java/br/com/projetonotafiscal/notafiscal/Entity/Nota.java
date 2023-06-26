@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity(name = "Nota")
@@ -22,14 +21,11 @@ public class Nota {
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-    @ManyToMany
-    @JoinTable(name = "notas_itens",
-            joinColumns = @JoinColumn(name = "id_nota"),
-            inverseJoinColumns = @JoinColumn(name = "id_item"))
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "nota", cascade = CascadeType.ALL)
     private List<Itens> itens;
 
-    private String numero;
-    private LocalDate data;
+    private Integer numero;
+    private Date data;
     private BigDecimal valor_total;
 
 
@@ -66,11 +62,11 @@ public class Nota {
         this.itens = itens;
     }
 
-    public LocalDate getData() {
+    public Date getData() {
         return data;
     }
 
-    public void setData(LocalDate data) {
+    public void setData(Date data) {
         this.data = data;
     }
 
@@ -82,11 +78,11 @@ public class Nota {
         this.valor_total = valor_total;
     }
 
-    public String getNumero() {
+    public Integer getNumero() {
         return numero;
     }
 
-    public void setNumero(String numero) {
+    public void setNumero(Integer numero) {
         this.numero = numero;
     }
 }

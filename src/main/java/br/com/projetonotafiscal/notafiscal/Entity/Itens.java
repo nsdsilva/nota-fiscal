@@ -16,9 +16,9 @@ public class Itens {
     @JoinColumn(name = "id_produto")
     private Produto produto;
 
-    @ManyToMany(mappedBy = "itens")
-    private List<Nota> notas;
-    private int ordenacao;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Nota nota;
+    private Integer ordenacao; //Integer
     private BigDecimal quantidade;
     private BigDecimal valor_total;
 
@@ -34,11 +34,11 @@ public class Itens {
         this.id = id;
     }
 
-    public int getOrdenacao() {
+    public Integer getOrdenacao() {
         return ordenacao;
     }
 
-    public void setOrdenacao(int ordenacao) {
+    public void setOrdenacao(Integer ordenacao) {
         this.ordenacao = ordenacao;
     }
 
@@ -58,12 +58,12 @@ public class Itens {
         this.quantidade = quantidade;
     }
 
-    public List<Nota> getNotas() {
-        return notas;
+    public Nota getNota() {
+        return nota;
     }
 
-    public void setNotas(List<Nota> notas) {
-        this.notas = notas;
+    public void setNota(Nota nota) {
+        this.nota = nota;
     }
 
     public BigDecimal getValor_total() {

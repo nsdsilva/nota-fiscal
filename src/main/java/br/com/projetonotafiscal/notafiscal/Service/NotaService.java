@@ -36,7 +36,7 @@ public class NotaService {
         Nota nota = new Nota(dto);
 
         if (dto.getCliente() == null) {
-            throw new ValidacaoException("É necessário informar um clinete.");
+            throw new ValidacaoException("É necessário informar um cliente .");
         }
 
         if (!clienteRepository.existsById(dto.getCliente())) {
@@ -47,41 +47,22 @@ public class NotaService {
 
         Random random = new Random();
         int numeroAleatorio = random.nextInt();
-        String codigoAleatorio = String.valueOf(numeroAleatorio);
-        nota.setNumero(codigoAleatorio);
+        nota.setNumero(numeroAleatorio);
 
-        int ordenacao = 0;
-        BigDecimal somaTotal = null;
-        List<Itens> itens = new ArrayList<>();
+        int ordenacao = 1;
+        BigDecimal somaTotal = BigDecimal.ZERO;
 
         for (Itens item : dto.getItens()) {
-            if (dto.getItens().indexOf(item) == 0) {
-                ordenacao = 1;
-            } else {
-                ordenacao += 1;
-            }
+           item.setOrdenacao(ordenacao++);
 
-            Produto produto = item.getProduto();
-            BigDecimal valorItem = produto.getValor_unitario();
-            BigDecimal qtde = item.getQuantidade();
-
-            valorItem = valorItem.multiply(qtde);
-            somaTotal = somaTotal.add(valorItem);
-
-            item.setValor_total(somaTotal);
-            item.setOrdenacao(ordenacao);
-
-            itens.add(item);
-            System.out.println(itens);
-
+           item.setValor_total(item.getQuantidade().multiply(item.getProduto().getValor_unitario()));
+           somaTotal = somaTotal.add(item.getValor_total());
         }
+
+        nota.setValor_total(somaTotal);
 
         nota = repository.save(nota);
 
         return nota;
     }
-
-
-
-
 }
