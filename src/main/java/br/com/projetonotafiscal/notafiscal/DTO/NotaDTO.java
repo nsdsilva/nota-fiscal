@@ -1,5 +1,6 @@
 package br.com.projetonotafiscal.notafiscal.DTO;
 
+import br.com.projetonotafiscal.notafiscal.Entity.Cliente;
 import br.com.projetonotafiscal.notafiscal.Entity.Itens;
 import br.com.projetonotafiscal.notafiscal.Entity.Nota;
 
@@ -12,7 +13,7 @@ public class NotaDTO {
 
 
     private Long id;
-    private Long cliente;
+    private Cliente cliente;
     private List<Itens> itens;
     private Date data;
     private BigDecimal valor_total;
@@ -22,7 +23,7 @@ public class NotaDTO {
 
     public NotaDTO(Nota nota) {
         this.id = nota.getId();
-        this.cliente = nota.getCliente().getId();
+        this.cliente = nota.getCliente();
         this.itens = nota.getItens();
         this.data = nota.getData();
         this.valor_total = nota.getValor_total();
@@ -37,11 +38,11 @@ public class NotaDTO {
         this.id = id;
     }
 
-    public Long getCliente() {
+    public Cliente getCliente() {
         return cliente;
     }
 
-    public void setCliente(Long cliente) {
+    public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
 

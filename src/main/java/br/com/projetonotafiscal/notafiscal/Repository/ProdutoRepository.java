@@ -12,5 +12,5 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     Long findTopByOrderByIdDesc();
 
     @Query("SELECT valor_unitario FROM Produto WHERE id = :id")
-    Produto findByValorUnitarioProduto(Long id);
+    Long findByValorUnitarioProduto(Long id);
 }

@@ -16,7 +16,7 @@ public class Itens {
     @JoinColumn(name = "id_produto")
     private Produto produto;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Nota nota;
     private Integer ordenacao; //Integer
     private BigDecimal quantidade;

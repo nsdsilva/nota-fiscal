@@ -8,4 +8,6 @@ import java.math.BigDecimal;
 
 public interface ItensRepository extends JpaRepository<Itens, Long> {
 
+    @Query("SELECT MAX(ordenacao) FROM Itens WHERE nota = :nota")
+    Integer findByOrdenacao(Long nota);
 }

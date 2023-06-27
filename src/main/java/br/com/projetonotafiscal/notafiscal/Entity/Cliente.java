@@ -20,6 +20,9 @@ public class Cliente {
 
     public Cliente() {}
 
+    public Cliente(int id) {
+        this.id = Long.valueOf(id);
+    }
 
     public Cliente(ClienteDTO dto) {
         this.id = dto.getId();
