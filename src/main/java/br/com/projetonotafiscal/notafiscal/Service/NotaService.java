@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -59,11 +58,12 @@ public class NotaService {
         for (Itens item : dto.getItens()) {
            item.setOrdenacao(ordenacao++);
 
-            Long valor = item.getProduto().getId();
-            Long valorUnitario = produtoRepository.findByValorUnitarioProduto(valor);
+           Long valorUnitario = produtoRepository.findByValorUnitarioProduto(item.getProduto().getId());
 
            item.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
            somaTotal = somaTotal.add(item.getValor_total());
+
+           item.setNota(nota);
         }
 
         nota.setValor_total(somaTotal);
@@ -73,27 +73,36 @@ public class NotaService {
         return nota;
     }
 
+
     //método para atualizar nota
-    public void atualizar(@org.jetbrains.annotations.NotNull NotaDTO dto) {
+    public void atualizar(NotaDTO dto) {
         Nota nota = repository.getReferenceById(dto.getId());
 
-        int ordenacao = Integer.parseInt(nota.toString());
-        BigDecimal somaTotal = BigDecimal.ZERO;
+        if (!repository.existsById(dto.getId())) {
+            throw new ValidacaoException("A nota fiscal informada não existe.");
+        } else {
+            int ordenacao = 1;
+            BigDecimal somaTotal = BigDecimal.ZERO;
 
-        for (Itens item : dto.getItens()) {
-            item.setOrdenacao(ordenacao++);
+            for (Itens item : dto.getItens()) {
+                item.setOrdenacao(ordenacao++);
 
-            Long valor = item.getProduto().getId();
-            Long valorUnitario = produtoRepository.findByValorUnitarioProduto(valor);
+                Long valorUnitario = produtoRepository.findByValorUnitarioProduto(item.getProduto().getId());
 
-            item.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
-            somaTotal = somaTotal.add(item.getValor_total());
+                item.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
+                somaTotal = somaTotal.add(item.getValor_total());
+
+                item.setNota(nota);
+                item = itensRepository.save(item);
+            }
+
+            nota.setValor_total(somaTotal);
+
+            nota = repository.save(nota);
         }
-
-        dto.setValor_total(somaTotal);
-
-        nota.atualizar(dto);
     }
+
+
 
     //método para listar todas as notas
     public Page<Nota> listarTodos(Pageable paginacao) {

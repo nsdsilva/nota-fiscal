@@ -1,13 +1,16 @@
 package br.com.projetonotafiscal.notafiscal.Repository;
 
 import br.com.projetonotafiscal.notafiscal.Entity.Itens;
+import br.com.projetonotafiscal.notafiscal.Entity.Nota;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface ItensRepository extends JpaRepository<Itens, Long> {
 
-    @Query("SELECT MAX(ordenacao) FROM Itens WHERE nota = :nota")
-    Integer findByOrdenacao(Long nota);
+    @Query("select i from Itens i where nota = :id")
+    List<Itens> findAllByIdItens(Nota id);
+
 }

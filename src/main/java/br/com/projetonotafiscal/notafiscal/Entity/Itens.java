@@ -1,5 +1,7 @@
 package br.com.projetonotafiscal.notafiscal.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,7 +18,8 @@ public class Itens {
     @JoinColumn(name = "id_produto")
     private Produto produto;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
     private Nota nota;
     private Integer ordenacao; //Integer
     private BigDecimal quantidade;

@@ -3,6 +3,7 @@ package br.com.projetonotafiscal.notafiscal.Entity;
 import br.com.projetonotafiscal.notafiscal.DTO.ClienteDTO;
 import br.com.projetonotafiscal.notafiscal.DTO.NotaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ public class Nota {
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "nota", cascade = CascadeType.ALL)
     private List<Itens> itens;
 
@@ -31,9 +33,9 @@ public class Nota {
 
     public Nota() {}
 
-    public Nota(int id) {
-        this.id = Long.valueOf(id);
-    }
+//    public Nota(int id) {
+//        this.id = Long.valueOf(id);
+//    }
 
     public Nota(NotaDTO dto) {
         this.id = dto.getId();
