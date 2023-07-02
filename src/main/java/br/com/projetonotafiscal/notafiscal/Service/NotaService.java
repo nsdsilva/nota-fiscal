@@ -56,6 +56,13 @@ public class NotaService {
         BigDecimal somaTotal = BigDecimal.ZERO;
 
         for (Itens item : dto.getItens()) {
+            if (item.getQuantidade() == null) {
+                throw new ValidacaoException("É necessário adicionar a quantidade dos produtos na nota fiscal.");
+            }
+            if (item.getProduto() == null) {
+                throw new ValidacaoException("É necessário adicionar ao menos um produto na nota fiscal.");
+            }
+
            item.setOrdenacao(ordenacao++);
 
            Long valorUnitario = produtoRepository.findByValorUnitarioProduto(item.getProduto().getId());
@@ -73,7 +80,6 @@ public class NotaService {
         return nota;
     }
 
-
     //método para atualizar nota
     public void atualizar(NotaDTO dto) {
         Nota nota = repository.getReferenceById(dto.getId());
@@ -81,7 +87,7 @@ public class NotaService {
         if (!repository.existsById(dto.getId())) {
             throw new ValidacaoException("A nota fiscal informada não existe.");
         } else {
-            int ordenacao = 1;
+            int ordenacao = itensRepository.findByUltimaOrdencao(nota);
             BigDecimal somaTotal = BigDecimal.ZERO;
 
             for (Itens item : dto.getItens()) {
@@ -93,16 +99,13 @@ public class NotaService {
                 somaTotal = somaTotal.add(item.getValor_total());
 
                 item.setNota(nota);
-                item = itensRepository.save(item);
             }
 
             nota.setValor_total(somaTotal);
 
-            nota = repository.save(nota);
+            nota.atualizar(dto);
         }
     }
-
-
 
     //método para listar todas as notas
     public Page<Nota> listarTodos(Pageable paginacao) {

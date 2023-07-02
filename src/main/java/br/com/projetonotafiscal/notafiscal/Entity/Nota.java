@@ -33,9 +33,9 @@ public class Nota {
 
     public Nota() {}
 
-//    public Nota(int id) {
-//        this.id = Long.valueOf(id);
-//    }
+    public Nota(int id) {
+        this.id = Long.valueOf(id);
+    }
 
     public Nota(NotaDTO dto) {
         this.id = dto.getId();
@@ -103,6 +103,9 @@ public class Nota {
         }
         if (dto.getData() != null) {
             this.data = dto.getData();
+        }
+        if (dto.getValor_total() != null) {
+            this.valor_total = dto.getValor_total();
         }
     }
 }

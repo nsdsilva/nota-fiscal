@@ -21,7 +21,7 @@ public class Itens {
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     private Nota nota;
-    private Integer ordenacao; //Integer
+    private Integer ordenacao;
     private BigDecimal quantidade;
     private BigDecimal valor_total;
 
