@@ -24,7 +24,7 @@ public class Nota {
     private Cliente cliente;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "nota", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "nota", cascade = CascadeType.PERSIST)
     private List<Itens> itens;
 
     private Integer numero;
@@ -97,9 +97,6 @@ public class Nota {
     public void atualizar(NotaDTO dto) {
         if (dto.getCliente() != null) {
             this.cliente = new Cliente(new ClienteDTO());
-        }
-        if (dto.getItens() != null) {
-            this.itens = dto.getItens();
         }
         if (dto.getData() != null) {
             this.data = dto.getData();

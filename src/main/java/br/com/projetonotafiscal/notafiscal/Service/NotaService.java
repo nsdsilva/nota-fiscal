@@ -62,6 +62,9 @@ public class NotaService {
             if (item.getProduto() == null) {
                 throw new ValidacaoException("É necessário adicionar ao menos um produto na nota fiscal.");
             }
+            if (!produtoRepository.existsById(item.getProduto().getId())) {
+                throw new ValidacaoException("O produto selecionado não existe.");
+            }
 
            item.setOrdenacao(ordenacao++);
 
@@ -87,20 +90,32 @@ public class NotaService {
         if (!repository.existsById(dto.getId())) {
             throw new ValidacaoException("A nota fiscal informada não existe.");
         } else {
-            int ordenacao = itensRepository.findByUltimaOrdencao(nota);
             BigDecimal somaTotal = BigDecimal.ZERO;
 
             for (Itens item : dto.getItens()) {
-                item.setOrdenacao(ordenacao++);
+              if (item.getId() == null) { //Adicionando item que não existe na nota fiscal
+                  int ordenacao = itensRepository.findByUltimaOrdencao(nota) + 1;
+                  somaTotal = repository.findbyValorTotalNota(dto.getId());
+                  item.setOrdenacao(ordenacao++);
 
-                Long valorUnitario = produtoRepository.findByValorUnitarioProduto(item.getProduto().getId());
+                  Long valorUnitario = produtoRepository.findByValorUnitarioProduto(item.getProduto().getId());
 
-                item.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
-                somaTotal = somaTotal.add(item.getValor_total());
+                  item.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
+                  somaTotal = somaTotal.add(item.getValor_total());
 
-                item.setNota(nota);
+                  item.setNota(nota);
+              } else {
+//                  int ordenacao = 1;
+//                  item.setOrdenacao(ordenacao++);
+
+                  Long valorUnitario = produtoRepository.findByValorUnitarioProduto(item.getProduto().getId());
+
+                  item.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
+                  somaTotal = somaTotal.add(item.getValor_total());
+
+                  item.setNota(nota);
+              }
             }
-
             nota.setValor_total(somaTotal);
 
             nota.atualizar(dto);
