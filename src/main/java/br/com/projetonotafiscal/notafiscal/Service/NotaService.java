@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -91,34 +92,18 @@ public class NotaService {
             throw new ValidacaoException("A nota fiscal informada não existe.");
         } else {
             BigDecimal somaTotal = BigDecimal.ZERO;
+            List<Itens> list = itensRepository.findAllByIdItens(nota);
+            List<Itens> listaDTO = dto.getItens();
+            List<Itens> listaFinal = new ArrayList<>();
 
-            for (Itens item : dto.getItens()) {
-              if (item.getId() == null) { //Adicionando item que não existe na nota fiscal
-                  int ordenacao = itensRepository.findByUltimaOrdencao(nota) + 1;
-                  somaTotal = repository.findbyValorTotalNota(dto.getId());
-                  item.setOrdenacao(ordenacao++);
-
-                  Long valorUnitario = produtoRepository.findByValorUnitarioProduto(item.getProduto().getId());
-
-                  item.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
-                  somaTotal = somaTotal.add(item.getValor_total());
-
-                  item.setNota(nota);
-              } else {
-//                  int ordenacao = 1;
-//                  item.setOrdenacao(ordenacao++);
-
-                  Long valorUnitario = produtoRepository.findByValorUnitarioProduto(item.getProduto().getId());
-
-                  item.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
-                  somaTotal = somaTotal.add(item.getValor_total());
-
-                  item.setNota(nota);
-              }
+            for (Itens item : list) {
+                if (!listaDTO.contains(item.getId())) {
+                    itensRepository.deleteById(item.getId());
+                } else {
+                    listaFinal.add(item);
+                    System.out.println("Adicionando " + item.getId());
+                }
             }
-            nota.setValor_total(somaTotal);
-
-            nota.atualizar(dto);
         }
     }
 
