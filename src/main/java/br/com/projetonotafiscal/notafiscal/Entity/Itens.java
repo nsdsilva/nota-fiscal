@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Entity(name = "Itens")
 @Table(name = "itens")
@@ -75,5 +76,19 @@ public class Itens {
 
     public void setValor_total(BigDecimal valor_total) {
         this.valor_total = valor_total;
+    }
+
+    public boolean equals(Object obj) {
+        Itens comparacao = (Itens) obj;
+        if (this.id != comparacao.getId()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getProduto(), getNota(), getOrdenacao(), getQuantidade(), getValor_total());
     }
 }

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class NotaDTO {
 
@@ -78,4 +79,10 @@ public class NotaDTO {
         this.valor_total = valor_total;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        NotaDTO itens = (NotaDTO) o;
+        if (this.itens == itens.getItens()) return true;
+        return false;
+    }
 }

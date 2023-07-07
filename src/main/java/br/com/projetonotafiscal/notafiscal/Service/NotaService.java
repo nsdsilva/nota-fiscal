@@ -93,15 +93,28 @@ public class NotaService {
         } else {
             BigDecimal somaTotal = BigDecimal.ZERO;
             List<Itens> list = itensRepository.findAllByIdItens(nota);
-            List<Itens> listaDTO = dto.getItens();
             List<Itens> listaFinal = new ArrayList<>();
 
             for (Itens item : list) {
-                if (!listaDTO.contains(item.getId())) {
-                    itensRepository.deleteById(item.getId());
-                } else {
-                    listaFinal.add(item);
-                    System.out.println("Adicionando " + item.getId());
+                if (item.getId() == null) {
+                    int ordenacao = itensRepository.findByUltimaOrdencao(nota);
+                    somaTotal = repository.findbyValorTotalNota(nota.getId());
+
+                    item.setOrdenacao(ordenacao++);
+
+                    Long valorUnitario = produtoRepository.findByValorUnitarioProduto(item.getProduto().getId());
+
+                    item.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
+                    somaTotal = somaTotal.add(item.getValor_total());
+
+                    item.setNota(nota);
+                }
+                else {
+                    if (!dto.getItens().contains(itensRepository.getReferenceById(item.getId()))) {
+                        itensRepository.deleteById(item.getId());
+                    } else {
+                        System.out.println("Vou adicionar o elemento");
+                    }
                 }
             }
         }

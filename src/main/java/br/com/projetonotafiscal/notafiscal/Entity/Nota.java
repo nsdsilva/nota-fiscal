@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity(name = "Nota")
 @Table(name = "nota")
@@ -105,4 +106,5 @@ public class Nota {
             this.valor_total = dto.getValor_total();
         }
     }
+
 }
