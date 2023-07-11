@@ -78,7 +78,6 @@ public class NotaService {
         }
 
         nota.setValor_total(somaTotal);
-
         nota = repository.save(nota);
 
         return nota;
@@ -87,38 +86,46 @@ public class NotaService {
     //método para atualizar nota
     public void atualizar(NotaDTO dto) {
         Nota nota = repository.getReferenceById(dto.getId());
+        List<Itens> list = itensRepository.findAllByIdItens(nota);
+        BigDecimal somaTotal = BigDecimal.ZERO;
 
-        if (!repository.existsById(dto.getId())) {
-            throw new ValidacaoException("A nota fiscal informada não existe.");
-        } else {
-            BigDecimal somaTotal = BigDecimal.ZERO;
-            List<Itens> list = itensRepository.findAllByIdItens(nota);
-            List<Itens> listaFinal = new ArrayList<>();
-
-            for (Itens item : list) {
-                if (item.getId() == null) {
+        for (Itens item : list) { //Percorrendo a lista de itens que já esta salva no banco de dados
+            if (!dto.getItens().contains(itensRepository.getReferenceById(item.getId()))) {
+                itensRepository.deleteById(item.getId());
+            }
+            for (Itens itemDTO : dto.getItens()) { //Percorrendo a lista do dto que estou recebendo
+                if (itemDTO.getId() == null) {
                     int ordenacao = itensRepository.findByUltimaOrdencao(nota);
-                    somaTotal = repository.findbyValorTotalNota(nota.getId());
-
                     item.setOrdenacao(ordenacao++);
+                    itemDTO.setOrdenacao(ordenacao++);
+
+                    Long valorUnitario = produtoRepository.findByValorUnitarioProduto(item.getProduto().getId());
+
+                    item.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
+                    somaTotal = somaTotal.add(item.getValor_total());
+                    itemDTO.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
+
+                    item.setNota(nota);
+
+                    break;
+                }
+                if (item.getId() == itemDTO.getId()) {
+                    item.setQuantidade(itemDTO.getQuantidade());
 
                     Long valorUnitario = produtoRepository.findByValorUnitarioProduto(item.getProduto().getId());
 
                     item.setValor_total(item.getQuantidade().multiply(BigDecimal.valueOf(valorUnitario)));
                     somaTotal = somaTotal.add(item.getValor_total());
 
-                    item.setNota(nota);
-                }
-                else {
-                    if (!dto.getItens().contains(itensRepository.getReferenceById(item.getId()))) {
-                        itensRepository.deleteById(item.getId());
-                    } else {
-                        System.out.println("Vou adicionar o elemento");
-                    }
+                    break;
                 }
             }
         }
+
+        nota.setValor_total(somaTotal);
+        nota.atualizar(dto);
     }
+
 
     //método para listar todas as notas
     public Page<Nota> listarTodos(Pageable paginacao) {

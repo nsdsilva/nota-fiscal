@@ -25,7 +25,7 @@ public class Nota {
     private Cliente cliente;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "nota", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "nota", cascade = CascadeType.ALL)
     private List<Itens> itens;
 
     private Integer numero;
@@ -98,6 +98,28 @@ public class Nota {
     public void atualizar(NotaDTO dto) {
         if (dto.getCliente() != null) {
             this.cliente = new Cliente(new ClienteDTO());
+        }
+        if (dto.getItens() != null) {
+            for (Itens itemDTO : dto.getItens()) {
+                if (itemDTO.getId() == null) {
+                    // Criar e adicionar novo item à lista
+                    Itens novoItem = new Itens();
+                    novoItem.setOrdenacao(itemDTO.getOrdenacao());
+                    novoItem.setProduto(itemDTO.getProduto());
+                    novoItem.setQuantidade(itemDTO.getQuantidade());
+                    novoItem.setValor_total(itemDTO.getValor_total());
+                    novoItem.setNota(this);
+                    this.itens.add(novoItem);
+                } else {
+                    // Atualizar item existente
+                    for (Itens item : this.itens) {
+                        if (item.getId().equals(itemDTO.getId())) {
+                            item.setQuantidade(itemDTO.getQuantidade());
+                            break;
+                        }
+                    }
+                }
+            }
         }
         if (dto.getData() != null) {
             this.data = dto.getData();
