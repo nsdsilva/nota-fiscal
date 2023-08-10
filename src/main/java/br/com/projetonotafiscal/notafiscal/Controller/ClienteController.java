@@ -7,9 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("cliente")
@@ -24,28 +29,28 @@ public class ClienteController {
     public ResponseEntity salvar(@RequestBody ClienteDTO dados) {
         Cliente dto = service.salvar(dados);
 
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
     public ResponseEntity atualizar(@RequestBody ClienteDTO dados) {
         service.atualizar(dados);
 
-        return ResponseEntity.ok("Atualizado com Sucesso!");
+        return new ResponseEntity<>(dados, HttpStatus.OK);
     }
 
 
     @GetMapping
-    public ResponseEntity<Page<ClienteDTO>> buscarTodos(@PageableDefault(size = 10, sort = {"nome"})Pageable paginacao) {
-        Page dto = service.listarTodos(paginacao);
+    public ResponseEntity<List<Cliente>> buscarTodos(@PageableDefault(size = 10, sort = {"nome"})Pageable paginacao) {
+        List<Cliente> dto = service.listarTodos();
 
         return ResponseEntity.ok(dto);
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity detalha(@PathVariable Long id) {
+    public ResponseEntity detalha(@PathVariable("id") Long id) {
         Cliente dto = service.detalhar(id);
 
         return ResponseEntity.ok(dto);
@@ -53,9 +58,9 @@ public class ClienteController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity deletar(@PathVariable Long id) {
+    public ResponseEntity deletar(@PathVariable("id") Long id) {
         service.excluir(id);
-        return ResponseEntity.ok("Excluído com Sucesso!");
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
 }

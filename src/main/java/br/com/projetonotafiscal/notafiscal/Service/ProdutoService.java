@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -50,10 +51,10 @@ public class ProdutoService {
 
 
     //método para listar todos os produtos
-    public Page<ProdutoDTO> listarTodos(Pageable paginacao) {
-        Page page = repository.findAll(paginacao).map(ProdutoDTO :: new);
+    public List<Produto> listarTodos() {
+        List<Produto> produtos = repository.findAll();
 
-        return page;
+        return produtos;
     }
 
 

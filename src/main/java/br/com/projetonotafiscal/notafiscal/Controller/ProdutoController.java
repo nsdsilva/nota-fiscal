@@ -4,12 +4,16 @@ import br.com.projetonotafiscal.notafiscal.DTO.ProdutoDTO;
 import br.com.projetonotafiscal.notafiscal.Entity.Produto;
 import br.com.projetonotafiscal.notafiscal.Service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/produto")
@@ -23,20 +27,20 @@ public class ProdutoController {
     public ResponseEntity salvar(@RequestBody ProdutoDTO dto) {
         Produto dados = service.salvar(dto);
 
-        return ResponseEntity.ok(dados);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dados);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity atualizar(@RequestBody ProdutoDTO dto) {
+    public ResponseEntity atualizar(@RequestBody @Validated ProdutoDTO dto) {
         service.atualizar(dto);
 
-        return ResponseEntity.ok("Atualizado com Sucesso!");
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProdutoDTO>> buscarTodos(@PageableDefault(size = 10, sort = {"codigo"}) Pageable paginacao) {
-        Page dto = service.listarTodos(paginacao);
+    public ResponseEntity<List<Produto>> buscarTodos(@PageableDefault(size = 10, sort = {"codigo"}) Pageable paginacao) {
+        List<Produto> dto = service.listarTodos();
 
         return ResponseEntity.ok(dto);
     }
@@ -52,6 +56,7 @@ public class ProdutoController {
     @Transactional
     public ResponseEntity deletar(@PathVariable Long id) {
         service.excluir(id);
-        return ResponseEntity.ok("Excluído com Sucesso!");
+
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 }

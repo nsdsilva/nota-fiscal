@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -51,10 +53,10 @@ public class ClienteService {
 
 
     //método para listar todos os clientes
-    public Page<ClienteDTO> listarTodos(Pageable paginacao) {
-        Page page = repository.findAll(paginacao).map(ClienteDTO :: new);
+    public List<Cliente> listarTodos() {
+        List<Cliente> cliente = repository.findAll();
 
-        return page;
+        return cliente;
     }
 
 
