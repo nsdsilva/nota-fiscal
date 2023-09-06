@@ -59,6 +59,10 @@ public class ClienteService {
         return cliente;
     }
 
+    public List<Cliente> buscarPorNome(String nome) {
+        return repository.findByNomeLike(nome);
+    }
+
 
     //método para listar o cliente de acordo com o seu ID
     public Cliente detalhar(Long id) {

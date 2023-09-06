@@ -128,10 +128,10 @@ public class NotaService {
 
 
     //método para listar todas as notas
-    public Page<Nota> listarTodos(Pageable paginacao) {
-        Page page = repository.findAll(paginacao).map(NotaDTO :: new);
+    public List<Nota> listarTodos() {
+        List<Nota> notas = repository.findAll();
 
-        return page;
+        return notas;
     }
 
     //método para listar a nota de acordo com o seu ID

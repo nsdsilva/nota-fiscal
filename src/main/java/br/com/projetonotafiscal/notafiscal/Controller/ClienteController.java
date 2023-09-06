@@ -48,6 +48,11 @@ public class ClienteController {
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping("/buscar-por-nome")
+    public List<Cliente> buscarPorNome(@RequestParam String nome) {
+        return service.buscarPorNome(nome);
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity detalha(@PathVariable("id") Long id) {

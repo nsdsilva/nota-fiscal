@@ -1,6 +1,8 @@
 package br.com.projetonotafiscal.notafiscal.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -9,9 +11,11 @@ import java.util.Objects;
 
 @Entity(name = "Itens")
 @Table(name = "itens")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Itens {
 
     @Id
+    @JsonProperty("id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -21,6 +25,7 @@ public class Itens {
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("itens")
     private Nota nota;
     private Integer ordenacao;
     private BigDecimal quantidade;

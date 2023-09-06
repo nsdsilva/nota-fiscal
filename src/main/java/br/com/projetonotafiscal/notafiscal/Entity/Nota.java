@@ -26,6 +26,7 @@ public class Nota {
 
     @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "nota", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("nota")
     private List<Itens> itens;
 
     private Integer numero;
