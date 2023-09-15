@@ -1,0 +1,14 @@
+::ng-deep form {
+  margin: 10px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: right;
+  height: 1px;
+  margin-top: 5px;
+}
+
+dx-button {
+  margin-left: 15px;
+}

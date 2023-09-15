@@ -1,0 +1,158 @@
+<div class="content-block dx-card responsive-paddings">
+  <dx-form id="form" [formData]="notas" [colCount]="1">
+
+    <dxi-item class="buttons">
+      <dx-button icon="undo" text="Voltar" [width]="136" (onClick)="voltar()">
+      </dx-button>
+
+      <dx-button icon="close" type="danger" text="Cancelar" [width]="136" (onClick)="cancelar()">
+      </dx-button>
+
+      <dx-button icon="check" type="success" text="Salvar" [width]="136" (onClick)="salvar()">
+      </dx-button>
+    </dxi-item>
+
+    <dxi-item itemType="group" caption="Cadastro de Nota Fiscal">
+
+      <div class="containerTextBox">
+        <div class="autocomplete">
+          <div class="autocomplete-input">
+            <dxi-item dataField="nome do Cliente">
+              <dx-autocomplete
+                placeholder="Digite o nome para buscar o cliente..."
+                [(value)]="clienteSalvo"
+                [dataSource]="listaClientes"
+                [searchExpr]="'nome'"
+                [valueExpr]="'nome'"
+                displayExpr="'nome'"
+                (onValueChanged)="updateClientesInfo($event)"
+                [width]="1000">
+              </dx-autocomplete>
+            </dxi-item>
+
+            <dxi-item>
+              <dx-button
+                icon="add"
+                type="success"
+                [width]="50"
+                (onClick)="novoCliente()">
+              </dx-button>
+            </dxi-item>
+          </div>
+        </div>
+
+        <div class="dateBox">
+          <dxi-item dataField="data de Emissão">
+            <dx-date-box
+              [inputAttr]="{ 'aria-label': 'Data da Nota' }"
+              [width]="300"
+              [value]="notas.data"
+              displayFormat="dd/MM/yyyy">
+            </dx-date-box>
+          </dxi-item>
+        </div>
+      </div>
+
+      <dxi-item>
+        <dx-data-grid
+          [dataSource]="dataSource"
+          keyExpr="id"
+          [columnAutoWidth]="true"
+          [remoteOperations]="false"
+          [allowColumnReordering]="true"
+          [rowAlternationEnabled]="true"
+          [showBorders]="true"
+          (onRowInserted)="onRowInserted($event)">
+
+
+          <dxo-header-filter [visible]="true"></dxo-header-filter>
+          <dxo-group-panel [visible]="true"></dxo-group-panel>
+          <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+          <dxo-editing
+            mode="row"
+            [allowAdding]="true"
+            [allowUpdating]="true"
+            [allowDeleting]="true">
+          </dxo-editing>
+
+          <dxi-column
+            caption="Ordem"
+            dataField="items.ordenacao"
+            dataType="number"
+            alignment="left"
+            [allowGrouping]="false"
+            [allowEditing]="false"
+            cssClass="bullet">
+          </dxi-column>
+
+
+          <dxi-column
+            dataField="produto.id"
+            caption="Produto"
+            dataType="number"
+            alignment="left"
+            [allowGrouping]="false"
+            cssClass="bullet">
+
+            <dxo-lookup
+              [dataSource]="dataSourceProdutos"
+
+              valueExpr="id"
+              displayExpr="descricao">
+            </dxo-lookup>
+          </dxi-column>
+
+          <dxi-column
+            caption="Quantidade"
+            dataField="quantidade"
+            dataType="number"
+            alignment="left"
+            [allowGrouping]="false"
+            cssClass="bullet">
+          </dxi-column>
+
+          <dxi-column
+            caption="Valor Unitário"
+            dataField="produto.valor_unitario"
+            dataType="number"
+            format="$ #.##0,#"
+            alignment="left"
+            [allowGrouping]="false"
+            [allowEditing]="true"
+            [calculateCellValue]="calcularValorUnitario"
+            cssClass="bullet">
+         </dxi-column>
+
+
+          <dxi-column
+            caption="Valor Total"
+            dataField="valor_total"
+            dataType="number"
+            format="$ #.##0,#"
+            alignment="left"
+            [allowGrouping]="false"
+            [allowEditing]="false"
+            cssClass="bullet">
+          </dxi-column>
+
+
+          <div *dxTemplate="let order of 'detail'">
+
+            </div>
+            <dxo-summary>
+              <dxi-total-item column="Freight" summaryType="sum">
+                <dxo-value-format type="decimal" [precision]="2"></dxo-value-format>
+              </dxi-total-item>
+              <dxi-group-item column="Freight" summaryType="sum">
+                <dxo-value-format type="decimal" [precision]="2"></dxo-value-format>
+              </dxi-group-item>
+              <dxi-group-item summaryType="count"> </dxi-group-item>
+            </dxo-summary>
+          </dx-data-grid>
+      </dxi-item>
+
+    </dxi-item>
+
+  </dx-form>
+</div>

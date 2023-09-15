@@ -1,0 +1,69 @@
+<div class="content-block dx-card responsive-paddings">
+
+  <dx-form
+    id="form"
+    [formData]="produto"
+    [colCount]="1">
+
+    <dxi-item class="buttons">
+      <dx-button
+        icon="undo"
+        text="Voltar"
+        [width]="136"
+        (onClick)="voltar()">
+      </dx-button>
+
+      <dx-button
+        icon="close"
+        type="danger"
+        text="Cancelar"
+        [width]="136"
+        (onClick)="cancelar()">
+      </dx-button>
+
+      <dx-button
+        icon="check"
+        type="success"
+        text="Salvar"
+        [width]="136"
+        (onClick)="salvar()">
+      </dx-button>
+    </dxi-item>
+
+    <dxi-item
+      itemType="group"
+      caption="Cadastro de Produto">
+
+      <dxi-item dataField="descricao">
+        <dx-text-box
+          [inputAttr]="{ 'aria-label': 'Descrição' }"
+          [(value)]="produto.descricao">
+        </dx-text-box>
+
+        <dxi-validation-rule
+          type="required"
+          message="Descrição Obrigatória">
+        </dxi-validation-rule>
+
+      </dxi-item>
+    </dxi-item>
+
+    <dxi-item dataField="valor_unitario">
+      <dx-number-box
+        [inputAttr]="{ 'aria-label': 'Valor Unitário' }"
+        [(value)]="produto.valor_unitario"
+        format="$ #.##0,##">
+      </dx-number-box>
+
+      <dxi-validation-rule
+        type="required"
+        message="Valor Unitário Obrigatório">
+      </dxi-validation-rule>
+    </dxi-item>
+
+
+
+  </dx-form>
+
+</div>
+
