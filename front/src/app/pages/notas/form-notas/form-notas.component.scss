@@ -1,0 +1,34 @@
+ng-deep form {
+  margin: 10px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: right;
+  height: 1px;
+  margin-top: 5px;
+}
+
+dx-button {
+  margin-left: 15px;
+}
+
+.containerTextBox {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.autocomplete-input {
+  display: flex;
+  align-items: center;
+}
+
+.autocomplete dxi-item {
+  margin-right: 10px; /* Espaço entre os elementos */
+}
+
+.dateBox {
+  flex: 0;
+}

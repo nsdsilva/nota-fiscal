@@ -1,0 +1,80 @@
+<dx-data-grid
+  [dataSource]="dataSource"
+  [remoteOperations]="true"
+  [height]="600"
+  [showBorders]="true">
+
+
+  <dxo-filter-row [visible]="true"></dxo-filter-row>
+  <dxo-header-filter [visible]="true"></dxo-header-filter>
+  <dxo-group-panel [visible]="true"></dxo-group-panel>
+  <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+  <dxo-editing
+    mode="row"
+    [allowAdding]="true"
+    [allowUpdating]="true"
+    [allowDeleting]="true">
+  </dxo-editing>
+
+  <dxo-grouping [autoExpandAll]="false"></dxo-grouping>
+  <dxo-master-detail [enabled]="true" template="detail"></dxo-master-detail>
+
+  <dxi-column dataField="CustomerID" caption="Produto">
+    <dxi-validation-rule
+      type="stringLength"
+      [max]="5"
+      message="The field Customer must be a string with a maximum length of 5.">
+    </dxi-validation-rule>
+
+    <dxo-lookup
+      [dataSource]="customersData"
+      valueExpr="Value"
+      displayExpr="Text">
+    </dxo-lookup>
+  </dxi-column>
+
+  <dxi-column dataField="CustomerID" caption="Quantidade">
+    <dxi-validation-rule
+      type="stringLength"
+      [max]="5"
+      message="The field Customer must be a string with a maximum length of 5.">
+    </dxi-validation-rule>
+
+    <dxo-lookup
+      [dataSource]="customersData"
+      valueExpr="Value"
+      displayExpr="Text">
+    </dxo-lookup>
+  </dxi-column>
+
+  <dxi-column dataField="CustomerID" caption="Valor Total">
+    <dxi-validation-rule
+      type="stringLength"
+      [max]="5"
+      message="The field Customer must be a string with a maximum length of 5.">
+    </dxi-validation-rule>
+
+    <dxo-lookup
+      [dataSource]="customersData"
+      valueExpr="Value"
+      displayExpr="Text">
+    </dxo-lookup>
+  </dxi-column>
+
+
+
+  <div *dxTemplate="let order of 'detail'">
+
+  </div>
+  <dxo-summary>
+    <dxi-total-item column="Freight" summaryType="sum">
+      <dxo-value-format type="decimal" [precision]="2"></dxo-value-format>
+    </dxi-total-item>
+    <dxi-group-item column="Freight" summaryType="sum">
+      <dxo-value-format type="decimal" [precision]="2"></dxo-value-format>
+    </dxi-group-item>
+    <dxi-group-item summaryType="count"> </dxi-group-item>
+  </dxo-summary>
+</dx-data-grid>
+

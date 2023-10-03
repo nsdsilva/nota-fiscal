@@ -1,0 +1,31 @@
+
+  <div class="dx-field">
+    <div class="dx-field-label">Estado</div>
+    <div class="dx-field-value">
+      <dx-select-box
+        #selectBoxEstado
+        [dataSource]="estados"
+        displayExpr="getEstado"
+        valueExpr="sigla"
+        [value]="estadoPadrao"
+        [inputAttr]="{ 'aria-label': 'Estado' }"
+        (onValueChanged)="ListaCidade($event.value)">
+      </dx-select-box>
+    </div>
+  </div>
+
+  <div class="dx-field">
+    <div class="dx-field-label">Cidade</div>
+    <div class="dx-field-value">
+      <dx-select-box
+        #selectBoxCidade
+        [dataSource]="cidades"
+        displayExpr="nome"
+        valueExpr="nome"
+        [inputAttr]="{ 'aria-label': 'Cidade' }"
+        (onValueChanged)="selecionarCidade($event.value)">
+      </dx-select-box>
+    </div>
+  </div>
+
+
