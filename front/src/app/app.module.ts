@@ -14,6 +14,7 @@ import { ListProdutosComponent } from './pages/produtos/list-produtos/list-produ
 import { FormProdutosComponent } from './pages/produtos/form-produtos/form-produtos.component';
 import { ListNotasComponent } from './pages/notas/list-notas/list-notas.component';
 import { FormNotasComponent } from './pages/notas/form-notas/form-notas.component';
+import {FormsModule} from "@angular/forms";
 
 
 
@@ -37,6 +38,7 @@ import { FormNotasComponent } from './pages/notas/form-notas/form-notas.componen
     HttpClientModule,
     SelectboxModule,
     HttpClientModule,
+    FormsModule
   ],
   providers: [
     AuthService,

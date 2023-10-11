@@ -49,21 +49,13 @@
 
       <dxi-item>
         <dx-data-grid
+          id="orders"
           [dataSource]="dataSource"
-          keyExpr="id"
+          [repaintChangesOnly]="true"
           [columnAutoWidth]="true"
-          [remoteOperations]="false"
-          [allowColumnReordering]="true"
-          [rowAlternationEnabled]="true"
           [showBorders]="true"
-          (onRowInserted)="onRowInserted($event)"
-          (onEditorPreparing)="onEditorPreparing($event)">
-
-
-          <dxo-filter-row [visible]="true"></dxo-filter-row>
-          <dxo-header-filter [visible]="true"></dxo-header-filter>
-          <dxo-group-panel [visible]="true"></dxo-group-panel>
-          <dxo-scrolling mode="virtual"></dxo-scrolling>
+          (onRowInserted)="onRowInserted($event)">
+          <dxo-paging [pageSize]="10"></dxo-paging>
 
           <dxo-editing
             mode="row"
@@ -73,113 +65,54 @@
           </dxo-editing>
 
           <dxi-column
-            caption="Ordem"
-            dataField="items.ordenacao"
-            dataType="number"
-            alignment="left"
-            [allowGrouping]="false"
-            [allowEditing]="false"
-            [width]="120"
-            cssClass="bullet">
+            dataField="ordenacao"
+            dataType="number">
           </dxi-column>
 
-
           <dxi-column
-            caption="Produto"
-            alignment="left"
-            [allowGrouping]="false"
-            [width]="500"
-            cssClass="bullet"
-            cellTemplate="selectCellTemplate">
+            dataField="produto"
+            dataType="string">
+
+            <dxo-lookup
+              [dataSource]="dataSourceProdutos"
+              valueExpr="id"
+              displayExpr="descricao">
+            </dxo-lookup>
           </dxi-column>
 
-          <div *dxTemplate="let d of 'selectCellTemplate'">
-            <div class="chart-cell">
-              <dx-select-box
-                [dataSource]="dataSourceProdutos"
-                [displayExpr]="'descricao'"
-                [value]="produtoSelecionado"
-                valueExpr="id"
-                [searchMode]="searchModeOption"
-                [searchExpr]="searchExprOption"
-                [minSearchLength]="3"
-                [searchEnabled]="true"
-                [showDataBeforeSearch]="showDataBeforeSearchOption"
-                [searchTimeout]="searchTimeoutOption"
-                (onValueChanged)="onProdutoSelecionado($event)">
-              </dx-select-box>
-            </div>
-          </div>
-
-
           <dxi-column
-            caption="Quantidade"
-            dataField="quantidade"
-            dataType="number"
-            alignment="left"
-            [allowGrouping]="false"
-            cssClass="bullet">
-          </dxi-column>
-
-
-          <dxi-column
-            caption="Valor Unitário"
             dataField="valor_unitario"
-            alignment="left"
-            [allowGrouping]="false"
+            caption="Valor Unitário"
+            dataType="number"
             [allowEditing]="false"
-            cssClass="bullet"
-            cellTemplate="valorUnitarioCellTemplate">
+            [cellTemplate]="valorUnitarioTemplate">
           </dxi-column>
 
-          <div *dxTemplate="let d of 'valorUnitarioCellTemplate'">
-            <div class="chart-cell">
-              <dx-number-box
-                [value]="valorProdutoSelecionado"
-                [format]="'R$ #,##0.00'"
-                [disabled]="true">
-              </dx-number-box>
-            </div>
-          </div>
+          <dxi-column
+            dataField="quantidade"
+            dataType="number">
+          </dxi-column>
 
           <dxi-column
-            caption="Valor Total"
             dataField="valor_total"
             dataType="number"
-            alignment="left"
-            [allowGrouping]="false"
-            [allowEditing]="false"
-            cssClass="bullet"
-            cellTemplate="valorTotalCellTemplate">
+            format="$ #.##0,#"
+            [calculateCellValue]="calculateTotalValue"
+            [allowSorting]="true"
+            [allowEditing]="false">
           </dxi-column>
 
-          <div *dxTemplate="let d of 'valorTotalCellTemplate'">
-            <div class="chart-cell">
-              <dx-number-box
-                [value]="calcularValorTotal(d.data)"
-                [format]="'$ #,##0.00'"
-                [disabled]="true">
-              </dx-number-box>
-            </div>
-          </div>
-
-          <div *dxTemplate="let order of 'detail'">
-          </div>
-
-          <dxo-summary [calculateCustomSummary]="calculateSummary">
+          <dxo-summary>
             <dxi-total-item
-              name="сustomSummary1"
-              summaryType="custom">
-            </dxi-total-item>
-            <dxi-total-item
-              name="сustomSummary2"
-              summaryType="custom">
+              column="Amount"
+              summaryType="sum"
+              displayFormat="{0}"
+              valueFormat="currency">
             </dxi-total-item>
           </dxo-summary>
         </dx-data-grid>
       </dxi-item>
 
-    </dxi-item>
-
+      </dxi-item>
   </dx-form>
 </div>

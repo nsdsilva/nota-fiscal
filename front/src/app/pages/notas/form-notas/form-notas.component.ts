@@ -2,23 +2,27 @@ import {Component, NgModule, OnInit, ViewChild} from '@angular/core';
 import {
   DxAutocompleteModule,
   DxBulletModule,
-  DxButtonModule,
+  DxButtonModule, DxDataGridComponent,
   DxDataGridModule, DxDateBoxModule,
   DxFormComponent,
-  DxFormModule, DxNumberBoxModule, DxPopupModule, DxSelectBoxModule,
+  DxFormModule, DxGanttModule, DxNumberBoxModule, DxPopupModule, DxSelectBoxModule,
   DxTemplateModule, DxTextBoxModule
 } from "devextreme-angular";
 import {Nota} from "../../../shared/interfaces/nota";
 import {Cliente} from "../../../shared/interfaces/cliente";
 import {Itens} from "../../../shared/interfaces/itens";
 import {ClienteService} from "../../../shared/services/cliente.service";
-import {ProdutoService} from "../../../shared/services/produto.service";
 import {NotaService} from "../../../shared/services/nota.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import notify from "devextreme/ui/notify";
 import { Location } from '@angular/common';
 import {BrowserModule} from "@angular/platform-browser";
 import {ItensModule} from "../../../shared/components/itens/itens.component";
+import {DxoLookupModule} from "devextreme-angular/ui/nested";
+import {FormsModule} from "@angular/forms";
+import {BehaviorSubject} from "rxjs";
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import {ProdutoService} from "../../../shared/services/produto.service";
 
 @Component({
   selector: 'app-form-notas',
@@ -27,7 +31,12 @@ import {ItensModule} from "../../../shared/components/itens/itens.component";
 })
 export class FormNotasComponent implements OnInit {
 
-  @ViewChild(DxFormComponent, { static: false }) form! : DxFormComponent;
+  @ViewChild(DxFormComponent, {static: false}) form!: DxFormComponent;
+  @ViewChild(DxDataGridComponent, { static: false }) dataGrid!: DxDataGridComponent;
+
+  private produtoSubject = new BehaviorSubject<any>(null);
+  private quantidadeSubject = new BehaviorSubject<number>(0);
+  private valorUnitarioSubject = new BehaviorSubject<number>(0);
 
   notas!: Nota;
   listaClientes: Cliente[] = [];
@@ -41,15 +50,8 @@ export class FormNotasComponent implements OnInit {
   direction = 'up-push';
   sucesso: string[] = ['success'];
   erro: string[] = ['danger'];
-  searchModeOption = 'startswith';
-  searchExprOption: any = 'descricao';
-  showDataBeforeSearchOption = false;
-  searchTimeoutOption = 200;
-  valorProdutoSelecionado: any;
-  produtoSelecionado: any;
-  valorTotal: any;
   quantidade: any;
-  valorTotalSumary: any;
+
 
   coordinatePosition: object = {
     top: undefined,
@@ -63,11 +65,16 @@ export class FormNotasComponent implements OnInit {
               private service: NotaService,
               private location: Location,
               private router: Router,
-              private activatedRoute: ActivatedRoute) {}
+              private activatedRoute: ActivatedRoute) {
+
+    this.calculateTotalValue = this.calculateTotalValue.bind(this);
+  }
 
   ngOnInit(): void {
-    this.notas = {id: 0, cliente: {id: 0, codigo: '', nome: ''},
-      itens: [], numero: 0, data: new Date(), valor_total: 0};
+    this.notas = {
+      id: 0, cliente: {id: 0, codigo: '', nome: ''},
+      itens: [], numero: 0, data: new Date(), valor_total: 0,
+    };
 
 
     this.service.getById(this.activatedRoute.snapshot.params['id']).subscribe(
@@ -83,10 +90,36 @@ export class FormNotasComponent implements OnInit {
         this.clienteSalvo = this.notas.cliente.nome;
       });
 
+
     this.updateProdutoInfo();
+
+    //Atualizando a coluna de produto
+    this.produtoSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.updateValorTotal();
+    });
+
+    // Atualizando a coluna quantidade
+    this.quantidadeSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.updateValorTotal();
+    });
+
+    // Atualizando a coluna valor_unitario
+    this.valorUnitarioSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.updateValorTotal();
+    });
   }
 
 
+  //Carregando o cliente digitado no autocomplete de acordo com o nome que foi digitado
   updateClientesInfo(e: any) {
     const cliente = e.value;
 
@@ -96,77 +129,81 @@ export class FormNotasComponent implements OnInit {
   }
 
 
+//Carregando os produtos que são apresentados na column de produtos do datagrid
   updateProdutoInfo() {
     this.produtoService.listarProdutos().subscribe(produtos => {
-      this.dataSourceProdutos = produtos;
+      if (produtos)
+        this.dataSourceProdutos = produtos;
     });
   }
 
+//Inserindo os dados na linha
+  onRowInserted(event: any) {
+    const produtoSelecionadoId = event.data.produto;
+    const quantidade = event.data.quantidade;
 
-  onEditorPreparing(e: any) {
-    if (e.dataField === 'quantidade') {
-      e.editorOptions.onValueChanged = (digitado: any) => {
-        this.quantidade = digitado.value;
-      };
-    }
+    this.produtoService.getById(produtoSelecionadoId).subscribe((produto) => {
+      if (produto && quantidade) {
+        const newItem: Itens = {
+          produto: produto,
+          nota: event.data.nota,
+          ordenacao: event.data.ordenacao,
+          quantidade: quantidade,
+          valor_total: event.data.valor_total
+        };
+        this.items.push(newItem);
+
+        this.produtoSubject.next(produto);
+        this.quantidadeSubject.next(quantidade);
+        this.valorUnitarioSubject.next(produto.valor_unitario);
+      }
+    });
   }
 
-  onProdutoSelecionado(e: any) {
-    const produtoSelecionadoId = e.value;
-    const prodSelecionado = this.dataSourceProdutos.find(prod => prod.id === produtoSelecionadoId);
+//Apresenta o valor unitário do produto que é selecionado na linha
+  valorUnitarioTemplate = (container: any, options: any) => {
+    const produtoID = options.data.produto;
+    const produtoSelecionado = this.dataSourceProdutos.find(prod => prod.id === produtoID);
 
-    if (prodSelecionado) {
-      this.produtoSelecionado = prodSelecionado.id;
-      this.valorProdutoSelecionado = prodSelecionado.valor_unitario;
+    if (produtoSelecionado) {
+      const valorFormatado = produtoSelecionado.valor_unitario.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      container.append(valorFormatado);
     } else {
-      this.valorProdutoSelecionado = null;
+      container.append('');
     }
   }
 
-  calcularValorTotal(e: any) {
-    return this.valorTotal = this.quantidade * this.valorProdutoSelecionado;
+
+  //Apresenta o valor total do produto na linha
+  calculateTotalValue(data: any): number {
+    if (data.produto && data.quantidade) {
+      const produtoSelecionado = this.dataSourceProdutos.find(prod => prod.id === data.produto);
+      return produtoSelecionado.valor_unitario * data.quantidade;
+    }
+    return 0;
   }
 
-  novoCliente() {
+//Recarrego os valores (alterações) de acordo com o que foi atualizado na digitação da linha
+  updateValorTotal() {
+    const produto = this.produtoSubject.getValue();
+    const quantidade = this.quantidadeSubject.getValue();
+    const valorUnitario = this.valorUnitarioSubject.getValue();
+
+    if (produto && quantidade && valorUnitario) {
+      const valorTotal = produto.valor_unitario * quantidade;
+
+      this.dataGrid.instance.cellValue(this.dataGrid.instance.getSelectedRowKeys()[0], 'valor_total', valorTotal);
+    }
+  }
+
+   novoCliente() {
     this.router.navigate(['/novo-cliente']);
   }
-
-
-  onRowInserted(event: any) {
-    const newItem: Itens = {
-
-      produto: event.data.produto,
-      nota: event.data.nota,
-      ordenacao: event.data.ordenacao,
-      quantidade: event.data.quantidade,
-      valor_total: event.data.valor_total
-    };
-
-    this.items.push(newItem);
-  }
-
-  calculateSummary(options: any) {
-    // Calculating "customSummary1"
-    if(options.name == "customSummary1") {
-      switch(options.summaryProcess) {
-        case "start":
-          this.valorTotalSumary = 0;
-          break;
-        case "calculate":
-          this.valorTotalSumary += this.valorTotal;
-          break;
-        case "finalize":
-          this.valorTotalSumary;
-          break;
-      }
-    }
-
-    // Calculating "customSummary2"
-    if(options.name == "customSummary2") {
-      // ...
-      // Same "switch" statement here
-    }
-  };
 
 
   salvar() {
@@ -196,8 +233,6 @@ export class FormNotasComponent implements OnInit {
   cancelar() {
     this.form.instance.resetValues();
   }
-
-
 
   voltar() {
     this.location.back();
@@ -260,8 +295,8 @@ export class FormNotasComponent implements OnInit {
 @NgModule({
   imports: [BrowserModule, DxDataGridModule, DxTemplateModule, DxBulletModule, DxButtonModule, DxFormModule,
     DxNumberBoxModule, DxTextBoxModule, DxAutocompleteModule, DxDateBoxModule, ItensModule, DxPopupModule, DxSelectBoxModule,
-    DxSelectBoxModule],
+    DxSelectBoxModule, DxoLookupModule, FormsModule, DxGanttModule ],
   exports: [ FormNotasComponent ],
-  declarations: [ FormNotasComponent ]
+  declarations: [ FormNotasComponent ],
 })
 export class FormNotaModule {}
