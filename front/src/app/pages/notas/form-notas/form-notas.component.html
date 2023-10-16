@@ -25,12 +25,9 @@
                 [searchExpr]="'nome'"
                 [valueExpr]="'nome'"
                 displayExpr="'nome'"
-                (onValueChanged)="updateClientesInfo($event)"
-                [width]="900">
+                (onValueChanged)="updateClientesInfo($event)">
               </dx-autocomplete>
             </dxi-item>
-
-
           </div>
         </div>
 
@@ -55,6 +52,7 @@
           [columnAutoWidth]="true"
           [showBorders]="true"
           (onRowInserted)="onRowInserted($event)">
+
           <dxo-paging [pageSize]="10"></dxo-paging>
 
           <dxo-editing
@@ -66,12 +64,17 @@
 
           <dxi-column
             dataField="ordenacao"
-            dataType="number">
+            caption="Item"
+            dataType="number"
+            alignment="rigth"
+            [allowEditing]="false"
+            [width]="80">
           </dxi-column>
 
           <dxi-column
             dataField="produto"
-            dataType="string">
+            dataType="string"
+            [width]="500">
 
             <dxo-lookup
               [dataSource]="dataSourceProdutos"
@@ -81,16 +84,17 @@
           </dxi-column>
 
           <dxi-column
+            dataField="quantidade"
+            dataType="number"
+            [width]="110">
+          </dxi-column>
+
+          <dxi-column
             dataField="valor_unitario"
             caption="Valor Unitário"
             dataType="number"
             [allowEditing]="false"
             [cellTemplate]="valorUnitarioTemplate">
-          </dxi-column>
-
-          <dxi-column
-            dataField="quantidade"
-            dataType="number">
           </dxi-column>
 
           <dxi-column
@@ -104,11 +108,16 @@
 
           <dxo-summary>
             <dxi-total-item
-              column="Amount"
+              column="valor_total"
               summaryType="sum"
               displayFormat="{0}"
-              valueFormat="currency">
-            </dxi-total-item>
+              valueFormat="$ #.##0,#"
+            ></dxi-total-item>
+            <dxi-total-item
+              column="OrderCount"
+              summaryType="sum"
+              displayFormat="{0}"
+            ></dxi-total-item>
           </dxo-summary>
         </dx-data-grid>
       </dxi-item>

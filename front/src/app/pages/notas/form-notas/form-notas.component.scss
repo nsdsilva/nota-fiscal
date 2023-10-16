@@ -15,9 +15,9 @@ dx-button {
 
 .containerTextBox {
   display: flex;
-  justify-content: space-between;
+  justify-content: normal;
   margin-top: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .autocomplete-input {
@@ -26,7 +26,8 @@ dx-button {
 }
 
 .autocomplete dxi-item {
-  margin-right: 10px; /* Espaço entre os elementos */
+  margin-right: 5px;
+  width: 1150px;
 }
 
 .dateBox {

@@ -37,6 +37,7 @@ export class FormNotasComponent implements OnInit {
   private produtoSubject = new BehaviorSubject<any>(null);
   private quantidadeSubject = new BehaviorSubject<number>(0);
   private valorUnitarioSubject = new BehaviorSubject<number>(0);
+  private ordemSubject = new BehaviorSubject<number>(0);
 
   notas!: Nota;
   listaClientes: Cliente[] = [];
@@ -116,6 +117,14 @@ export class FormNotasComponent implements OnInit {
     ).subscribe(() => {
       this.updateValorTotal();
     });
+
+    // Atualizando a coluna ordenaçao
+    this.ordemSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.updateValorTotal();
+    });
   }
 
 
@@ -156,6 +165,7 @@ export class FormNotasComponent implements OnInit {
         this.produtoSubject.next(produto);
         this.quantidadeSubject.next(quantidade);
         this.valorUnitarioSubject.next(produto.valor_unitario);
+        this.ordemSubject.next(event.data.ordenacao);
       }
     });
   }
@@ -188,11 +198,13 @@ export class FormNotasComponent implements OnInit {
     return 0;
   }
 
+
 //Recarrego os valores (alterações) de acordo com o que foi atualizado na digitação da linha
   updateValorTotal() {
     const produto = this.produtoSubject.getValue();
     const quantidade = this.quantidadeSubject.getValue();
     const valorUnitario = this.valorUnitarioSubject.getValue();
+    const ordem = this.ordemSubject.getValue();
 
     if (produto && quantidade && valorUnitario) {
       const valorTotal = produto.valor_unitario * quantidade;
