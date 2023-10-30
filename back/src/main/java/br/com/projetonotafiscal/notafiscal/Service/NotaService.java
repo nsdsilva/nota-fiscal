@@ -11,6 +11,7 @@ import br.com.projetonotafiscal.notafiscal.Repository.ClienteRepository;
 import br.com.projetonotafiscal.notafiscal.Repository.ItensRepository;
 import br.com.projetonotafiscal.notafiscal.Repository.NotaRepository;
 import br.com.projetonotafiscal.notafiscal.Repository.ProdutoRepository;
+import com.mysql.cj.xdevapi.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,8 +48,6 @@ public class NotaService {
             throw new ValidacaoException("O cliente informado não existe.");
         }
 
-        Cliente cliente = clienteRepository.getReferenceById(dto.getCliente().getId());
-
         Random random = new Random();
         int numeroAleatorio = random.nextInt();
         nota.setNumero(numeroAleatorio);
@@ -83,11 +82,19 @@ public class NotaService {
         return nota;
     }
 
+
     //método para atualizar nota
     public void atualizar(NotaDTO dto) {
         Nota nota = repository.getReferenceById(dto.getId());
         List<Itens> list = itensRepository.findAllByIdItens(nota);
         BigDecimal somaTotal = BigDecimal.ZERO;
+
+        if (dto.getCliente() != null && dto.getCliente().getId() != null) {
+            Cliente cliente = clienteRepository.getReferenceById(dto.getCliente().getId());
+            nota.setCliente(cliente);
+        }
+
+        int ordenacao = 1;
 
         for (Itens item : list) { //Percorrendo a lista de itens que já esta salva no banco de dados
             if (!dto.getItens().contains(itensRepository.getReferenceById(item.getId()))) {
@@ -95,7 +102,6 @@ public class NotaService {
             }
             for (Itens itemDTO : dto.getItens()) { //Percorrendo a lista do dto que estou recebendo
                 if (itemDTO.getId() == null) {
-                    int ordenacao = itensRepository.findByUltimaOrdencao(nota);
                     item.setOrdenacao(ordenacao++);
                     itemDTO.setOrdenacao(ordenacao++);
 
@@ -125,7 +131,6 @@ public class NotaService {
         nota.setValor_total(somaTotal);
         nota.atualizar(dto);
     }
-
 
     //método para listar todas as notas
     public List<Nota> listarTodos() {

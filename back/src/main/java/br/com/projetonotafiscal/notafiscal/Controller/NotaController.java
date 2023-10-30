@@ -26,7 +26,6 @@ public class NotaController {
     private static final Logger logger = LoggerFactory.getLogger(NotaController.class);
 
 
-
     @PostMapping
     @Transactional
     public ResponseEntity salvar(@RequestBody NotaDTO dto) {

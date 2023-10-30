@@ -82,7 +82,9 @@ public class NotaDTO {
     @Override
     public boolean equals(Object o) {
         NotaDTO itens = (NotaDTO) o;
-        if (this.itens == itens.getItens()) return true;
+        if (this.itens == itens.getItens()) {
+            return true;
+        }
         return false;
     }
 }

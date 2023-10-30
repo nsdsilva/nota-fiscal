@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Nota } from '../interfaces/nota';
+import {Produto} from "../interfaces/produto";
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +19,9 @@ export class NotaService {
     return this.http.get<Nota[]>(this.API);
   }
 
-
   getById(id: number): Observable<Nota> {
     return this.http.get<Nota>(`${this.API}/${id}`);
   }
-
 
   salvarNota(nota: Nota): Observable<Nota> {
     if (nota.id) {
@@ -30,5 +29,9 @@ export class NotaService {
     } else {
       return this.http.post<Nota>(this.API, nota);
     }
+  }
+
+  deletarProdutos(nota: number): Observable<Nota> {
+    return this.http.delete<Nota>(`${this.API}/${nota}`);
   }
 }

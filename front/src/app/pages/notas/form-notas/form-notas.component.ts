@@ -5,8 +5,8 @@ import {
   DxButtonModule, DxDataGridComponent,
   DxDataGridModule, DxDateBoxModule,
   DxFormComponent,
-  DxFormModule, DxGanttModule, DxNumberBoxModule, DxPopupModule, DxSelectBoxModule,
-  DxTemplateModule, DxTextBoxModule
+  DxFormModule, DxLookupModule, DxNumberBoxModule, DxPopupModule, DxSelectBoxModule,
+  DxTemplateModule, DxTextBoxModule, DxValidationGroupModule
 } from "devextreme-angular";
 import {Nota} from "../../../shared/interfaces/nota";
 import {Cliente} from "../../../shared/interfaces/cliente";
@@ -15,14 +15,13 @@ import {ClienteService} from "../../../shared/services/cliente.service";
 import {NotaService} from "../../../shared/services/nota.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import notify from "devextreme/ui/notify";
-import { Location } from '@angular/common';
 import {BrowserModule} from "@angular/platform-browser";
 import {ItensModule} from "../../../shared/components/itens/itens.component";
-import {DxoLookupModule} from "devextreme-angular/ui/nested";
 import {FormsModule} from "@angular/forms";
 import {BehaviorSubject} from "rxjs";
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import {ProdutoService} from "../../../shared/services/produto.service";
+import {Produto} from "../../../shared/interfaces/produto";
 
 @Component({
   selector: 'app-form-notas',
@@ -39,20 +38,23 @@ export class FormNotasComponent implements OnInit {
   private valorUnitarioSubject = new BehaviorSubject<number>(0);
   private ordemSubject = new BehaviorSubject<number>(0);
 
+  private ordenacao: number = 0;
+
   notas!: Nota;
   listaClientes: Cliente[] = [];
   clienteSalvo: any;
-  dataSource: Itens[] = [];
+  produtoSalvo: any;
   dataSourceProdutos: any[] = [];
   items: Itens[] = [];
+  produto!: Produto;
+  notaID: number = 0;
   nome = '';
   isPredefined = true;
   predefinedPosition = 'bottom center';
   direction = 'up-push';
   sucesso: string[] = ['success'];
   erro: string[] = ['danger'];
-  quantidade: any;
-
+  alerta: string[] = ['warning'];
 
   coordinatePosition: object = {
     top: undefined,
@@ -64,7 +66,6 @@ export class FormNotasComponent implements OnInit {
   constructor(private clienteService: ClienteService,
               private produtoService: ProdutoService,
               private service: NotaService,
-              private location: Location,
               private router: Router,
               private activatedRoute: ActivatedRoute) {
 
@@ -81,18 +82,27 @@ export class FormNotasComponent implements OnInit {
     this.service.getById(this.activatedRoute.snapshot.params['id']).subscribe(
       notas => {
         this.notas = notas;
-        this.dataSource = notas.itens;
+        this.items = notas.itens;
+        this.notaID = notas.id;
+
+        let maxOrdenacao = 0;
 
         for (const i of notas.itens) {
-          const produto = i.produto?.descricao;
-          this.dataSourceProdutos.push(produto);
-        }
+          this.produtoSalvo = i.produto;
+          this.ordenacao = i.ordenacao;
 
+          if (this.ordenacao > maxOrdenacao) {
+            maxOrdenacao = this.ordenacao;
+          }
+
+          this.dataSourceProdutos.push( this.produtoSalvo);
+        }
+        this.carregarItensNota(this.notaID);
         this.clienteSalvo = this.notas.cliente.nome;
       });
 
-
     this.updateProdutoInfo();
+    this.updateClientesInfo();
 
     //Atualizando a coluna de produto
     this.produtoSubject.pipe(
@@ -117,74 +127,63 @@ export class FormNotasComponent implements OnInit {
     ).subscribe(() => {
       this.updateValorTotal();
     });
-
-    // Atualizando a coluna ordenaçao
-    this.ordemSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(() => {
-      this.updateValorTotal();
-    });
   }
 
 
   //Carregando o cliente digitado no autocomplete de acordo com o nome que foi digitado
-  updateClientesInfo(e: any) {
-    const cliente = e.value;
-
-    this.clienteService.getByNome(cliente).subscribe((resultado) => {
-      this.listaClientes = resultado;
+  updateClientesInfo() {
+    this.clienteService.listaClientes().subscribe((resultado) => {
+        this.listaClientes = resultado;
     });
   }
-
 
 //Carregando os produtos que são apresentados na column de produtos do datagrid
   updateProdutoInfo() {
     this.produtoService.listarProdutos().subscribe(produtos => {
-      if (produtos)
-        this.dataSourceProdutos = produtos;
+      this.dataSourceProdutos = produtos;
     });
   }
 
-//Inserindo os dados na linha
-  onRowInserted(event: any) {
-    const produtoSelecionadoId = event.data.produto;
-    const quantidade = event.data.quantidade;
 
-    this.produtoService.getById(produtoSelecionadoId).subscribe((produto) => {
-      if (produto && quantidade) {
-        const newItem: Itens = {
-          produto: produto,
-          nota: event.data.nota,
-          ordenacao: event.data.ordenacao,
-          quantidade: quantidade,
-          valor_total: event.data.valor_total
-        };
-        this.items.push(newItem);
-
-        this.produtoSubject.next(produto);
-        this.quantidadeSubject.next(quantidade);
-        this.valorUnitarioSubject.next(produto.valor_unitario);
-        this.ordemSubject.next(event.data.ordenacao);
+  carregarItensNota(notaId: number) {
+    this.service.getById(notaId).subscribe((nota) => {
+      if (nota && nota.itens) {
+        console.log('Minha lista carregada', nota.itens);
+        this.notas.itens = nota.itens;
+        this.items = this.notas.itens;
       }
     });
   }
 
-//Apresenta o valor unitário do produto que é selecionado na linha
-  valorUnitarioTemplate = (container: any, options: any) => {
-    const produtoID = options.data.produto;
-    const produtoSelecionado = this.dataSourceProdutos.find(prod => prod.id === produtoID);
 
-    if (produtoSelecionado) {
-      const valorFormatado = produtoSelecionado.valor_unitario.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+//Inserindo os dados na linha
+  onRowInserted(event: any) {
+    const produtoSelecionadoId = event.data.produto.id;
+
+    // Verifique se o item já existe na lista
+    const itemExistente = this.items.find(item => item.produto.id === produtoSelecionadoId);
+
+    if (!itemExistente) {
+      // Se o item não existe, então adicione-o
+      const quantidade = event.data.quantidade;
+
+      this.produtoService.getById(produtoSelecionadoId).subscribe((produto) => {
+        if (produto && quantidade) {
+          const ordenacao = this.items.length + 1;
+          const newItem: Itens = {
+            produto: produto,
+            nota: event.data.nota,
+            ordenacao: ordenacao,
+            quantidade: quantidade,
+            valor_total: event.data.valor_total
+          };
+          this.items.push(newItem);
+
+          this.produtoSubject.next(produto);
+          this.quantidadeSubject.next(quantidade);
+          this.valorUnitarioSubject.next(produto.valor_unitario);
+        }
       });
-      container.append(valorFormatado);
-    } else {
-      container.append('');
     }
   }
 
@@ -192,19 +191,25 @@ export class FormNotasComponent implements OnInit {
   //Apresenta o valor total do produto na linha
   calculateTotalValue(data: any): number {
     if (data.produto && data.quantidade) {
-      const produtoSelecionado = this.dataSourceProdutos.find(prod => prod.id === data.produto);
-      return produtoSelecionado.valor_unitario * data.quantidade;
+      const prodId = data.produto.id;
+      const quantidade = data.quantidade;
+
+      const produto = this.dataSourceProdutos.find((p) => p.id === prodId);
+
+      if (produto) {
+        const valorTotal = produto.valor_unitario * quantidade;
+        return valorTotal;
+      }
     }
     return 0;
   }
 
 
-//Recarrego os valores (alterações) de acordo com o que foi atualizado na digitação da linha
+  //Recarrego os valores (alterações) de acordo com o que foi atualizado na digitação da linha
   updateValorTotal() {
     const produto = this.produtoSubject.getValue();
     const quantidade = this.quantidadeSubject.getValue();
     const valorUnitario = this.valorUnitarioSubject.getValue();
-    const ordem = this.ordemSubject.getValue();
 
     if (produto && quantidade && valorUnitario) {
       const valorTotal = produto.valor_unitario * quantidade;
@@ -220,7 +225,7 @@ export class FormNotasComponent implements OnInit {
 
   salvar() {
     if (this.clienteSalvo) {
-      const clienteSelecionado = this.listaClientes.find(cliente => cliente.nome === this.clienteSalvo);
+      const clienteSelecionado = this.listaClientes.find(c => c.nome === this.clienteSalvo);
 
       if (clienteSelecionado) {
         this.notas.cliente = clienteSelecionado;
@@ -235,10 +240,11 @@ export class FormNotasComponent implements OnInit {
           }
         });
       } else {
+        this.showMessage('É necessário adicionar pelo menos um cliente.');
         console.error('Cliente não encontrado com o nome informado.');
       }
     } else {
-      console.error('Nenhum cliente foi selecionado antes de salvar a nota.');
+      this.showMessage('É necessário adicionar pelo menos um cliente.');
     }
   }
 
@@ -247,7 +253,7 @@ export class FormNotasComponent implements OnInit {
   }
 
   voltar() {
-    this.location.back();
+    this.router.navigate(['/notas']);
   }
 
   showSucesso() {
@@ -301,13 +307,39 @@ export class FormNotasComponent implements OnInit {
       console.error("Array 'erro' não definido ou vazio.");
     }
   }
+
+  showMessage(message: String) {
+    const position: any = this.isPredefined ? this.predefinedPosition : this.coordinatePosition;
+    const direction: any = this.direction;
+
+    if (this.sucesso && this.erro.length > 0) {
+      const randomIndex = Math.floor(Math.random() * this.sucesso.length);
+      const type = this.alerta[randomIndex];
+
+      notify({
+          message: message,
+          height: 45,
+          width: 500,
+          minWidth: 150,
+          type: type.toLowerCase(),
+          displayTime: 3500,
+          animation: {
+            show: { type: 'fade', duration: 400, from: 0, to: 1 },
+            hide: { type: 'fade', duration: 40, to: 0 },
+          },
+        },
+        { position, direction });
+    } else {
+      console.error("Array 'erro' não definido ou vazio.");
+    }
+  }
 }
 
 
 @NgModule({
   imports: [BrowserModule, DxDataGridModule, DxTemplateModule, DxBulletModule, DxButtonModule, DxFormModule,
     DxNumberBoxModule, DxTextBoxModule, DxAutocompleteModule, DxDateBoxModule, ItensModule, DxPopupModule, DxSelectBoxModule,
-    DxSelectBoxModule, DxoLookupModule, FormsModule, DxGanttModule ],
+    DxSelectBoxModule, DxLookupModule, FormsModule, DxValidationGroupModule ],
   exports: [ FormNotasComponent ],
   declarations: [ FormNotasComponent ],
 })

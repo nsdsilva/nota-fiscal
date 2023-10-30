@@ -9,11 +9,6 @@ import { UnauthenticatedContentModule } from './unauthenticated-content';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { SelectboxModule } from './pages/selectbox/selectbox.component';
-import { FormClientesComponent } from './pages/clientes/form-clientes/form-clientes.component';
-import { ListProdutosComponent } from './pages/produtos/list-produtos/list-produtos.component';
-import { FormProdutosComponent } from './pages/produtos/form-produtos/form-produtos.component';
-import { ListNotasComponent } from './pages/notas/list-notas/list-notas.component';
-import { FormNotasComponent } from './pages/notas/form-notas/form-notas.component';
 import {FormsModule} from "@angular/forms";
 
 

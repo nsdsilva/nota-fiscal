@@ -20,7 +20,7 @@ public class Nota {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
@@ -96,10 +96,16 @@ public class Nota {
         this.numero = numero;
     }
 
+
     public void atualizar(NotaDTO dto) {
-        if (dto.getCliente() != null) {
-            this.cliente = new Cliente(new ClienteDTO());
-        }
+        if (dto.getData() != null) {
+            this.data = dto.getData();
+       }
+
+       if (dto.getValor_total() != null) {
+            this.valor_total = dto.getValor_total();
+       }
+
         if (dto.getItens() != null) {
             for (Itens itemDTO : dto.getItens()) {
                 if (itemDTO.getId() == null) {
@@ -122,12 +128,5 @@ public class Nota {
                 }
             }
         }
-        if (dto.getData() != null) {
-            this.data = dto.getData();
-        }
-        if (dto.getValor_total() != null) {
-            this.valor_total = dto.getValor_total();
-        }
     }
-
 }
